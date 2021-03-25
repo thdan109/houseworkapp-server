@@ -5,7 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan'); 
 var app = express();
 var cors = require('cors');
-
+var dotenv = require('dotenv').config()
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/DB')
@@ -19,6 +19,7 @@ var loginAdminRouters = require('./routes/loginAdmin.route');
 var StaffRoute = require('./routes/Staff.route')
 var UserRoute = require('./routes/Customer.route')
 var ServiceRoute = require('./routes/Service.route')
+var CookingRoute = require('./routes/Cooking.route')
 app.use(cors())
 
 // view engine setup
@@ -40,6 +41,7 @@ app.use('/admin', loginAdminRouters);
 app.use('/staff', StaffRoute);
 app.use('/user', UserRoute);
 app.use('/service', ServiceRoute)
+app.use('/cooking',CookingRoute)
 
 
 

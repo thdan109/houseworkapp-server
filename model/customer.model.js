@@ -16,6 +16,7 @@ var userSchema = new mongoose.Schema({
    "address": String,
    "IDCard": String,
    "sex": String,
+  
    tokens: [{
       token: {
           type: String,
@@ -42,7 +43,6 @@ userSchema.pre('save', async function (next) {
    userSchema.methods.generateAuthToken = async function(tokenDevices) {
    // Generate an auth token for the user
    const user = this
-  
    const token = jwt.sign({_id: user._id},'hdan') 
    user.tokens = user.tokens.concat({token,tokenDevices:'tokenDevices'})
    
