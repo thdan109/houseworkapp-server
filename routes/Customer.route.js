@@ -172,11 +172,10 @@ router.post('/imageUser',uploadUser.single('photo'),  async(req, res)=>{
       })
       const user = req.user
       const id = user._id
-      const orderCooking = await Cooking.findOne({ idUser: id })
+      const orderCooking = await Cooking.find({ idUser: id })
       // const newOrder = {...order._doc, Service: 'Cooking'}
       const orderClear = await Clear.findOne({idUSer: id})
       res.status(200).send({orderCooking, orderClear})
-
       
    })
 

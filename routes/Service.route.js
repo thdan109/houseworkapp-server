@@ -35,7 +35,7 @@ router.post('/updataService', function(req,res){
          descriptionService: req.body.descriptionService,
          prince: req.body.prince
       }
-      Service.updateOne({ condition, process }).then(()=>{
+      Service.updateOne( condition, process ).then(()=>{
          
       })
    })

@@ -2,12 +2,16 @@ var mongoose = require('mongoose')
 
 var CookingSchema = new mongoose.Schema({
    "idUser": {type: String},
+   "fullname": String,
    "address": String,
    "date": Date,
    "dishList": [],
    "goMarket": String,
    "time": String,
    "number": String,
+   "idStaff": [],
+   "staff": [],
+   "status": String,
    "money": String
 })
 

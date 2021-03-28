@@ -5,10 +5,15 @@ var StaffSchema = new mongoose.Schema({
    "passwordStaff":String,
    "birthdayStaff": Date,
    "addressStaff": String,
+   "activity": [],
+   "status": String,
    "IDCardStaff": String,
    "sex": String,
    "birthPlace": String,
    "joinDay": Date,
+   "idWork": [],
+   "time": [String],
+   "datework": [String],
 })
 var Staff =  mongoose.model('Staff', StaffSchema, 'staff');
 module.exports = Staff;
