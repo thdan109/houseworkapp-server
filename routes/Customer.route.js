@@ -5,6 +5,7 @@ var User = require('../model/customer.model')
 var Cooking = require('../model/cooking.model')
 const multer = require("multer");
 var Clear = require("../model/clear.model")
+var Washing = require('../model/washing.model')
 
 var storage = multer.diskStorage({
    destination: function (req, file, cb) {
@@ -174,8 +175,12 @@ router.post('/imageUser',uploadUser.single('photo'),  async(req, res)=>{
       const id = user._id
       const orderCooking = await Cooking.find({ idUser: id })
       // const newOrder = {...order._doc, Service: 'Cooking'}
-      const orderClear = await Clear.findOne({idUSer: id})
-      res.status(200).send({orderCooking, orderClear})
+      const orderWashing = await Washing.find({idUser: id})
+      const orderClear = await Clear.find({ idUser: id })
+      res.status(200).send({orderCooking, orderClear, orderWashing})
+      // console.log(orderWashing);
+      // console.log(orderWashing);
+      
       
    })
 

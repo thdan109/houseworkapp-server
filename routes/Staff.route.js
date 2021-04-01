@@ -26,8 +26,17 @@ router.post('/statusStaff', async(req, res)=>{
    const date = req.body.dttime[1].date
    const dts = await dataStaff.find({time : { $ne : time}, datework : { $ne : date} })
    res.status(200).send(dts)
-
 })
+   router.post('/statusStaffWash', async(req, res) =>{
+      const timeSend = req.body.dttime[0].timeSend
+      const timeTake = req.body.dttime[1].timeTake
+      const dateSend = req.body.dttime[2].dateSend
+      const dateTake = req.body.dttime[3].dateTake
+      const dataTimeWash = await dataStaff.find({ time: { $ne: timeSend}, time: {$ne: timeTake},date : {$ne: dateSend}, date: { $ne:  dateTake}  })
+      res.status(200).send(dataTimeWash)
+      // console.log(dataTimeWash)
+     })
+
 //Thêm nhân viên
 router.post('/addStaff',(req, res) =>{
    const PostdataStaff = req.body;
