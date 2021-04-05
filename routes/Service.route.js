@@ -10,6 +10,11 @@ router.get('/dataService', function(req,res){
       res.json(data)
    })
 })
+// router.get('/dataServiceByID', function(req,res){
+//    Service.find({ _id: req.params  }).then(data=>{
+//       res.json(data)
+//    })
+// })
 //add service
 
 router.post('/addService', function(req,res){
@@ -38,6 +43,16 @@ router.post('/updataService', function(req,res){
       Service.updateOne( condition, process ).then(()=>{
          
       })
+   })
+})
+
+router.get('/delService/id=:idService',async(req,res)=>{
+   // console.log(req.params);
+   const idService = req.params.idService
+   Service.deleteOne({ _id: idService }).then(res =>{
+      
+   }).catch(err =>{
+
    })
 })
 

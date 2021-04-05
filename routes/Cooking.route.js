@@ -42,46 +42,100 @@ var Staff = require('../model/staff.model')
       }
    })
 
-   router.post('/addStaff', async(req,res)=>{
-      // console.log(req.body);
-      // console.log(req.body.dttime[0].time);
-      // console.log(req.body.dttime[1].date)
-      // console.log(req.body.dttime[2].id);
-      const time= req.body.dttime[0].time;
-      const date = req.body.dttime[1].date
-      const idStaff = req.body.id;
-      const idCooking = req.body.dttime[2].id;
-      const getStaff =  await Staff.findOne({_id: idStaff})
+   // router.post('/addStaff', async(req,res)=>{
+   //    // console.log(req.body);
+   //    // console.log(req.body.dttime[0].time);
+   //    // console.log(req.body.dttime[1].date)
+   //    // console.log(req.body.dttime[2].id);
+   //    const time= req.body.dttime[0].time;
+   //    const date = req.body.dttime[1].date
+   //    const idStaff = req.body.id;
+   //    const idCooking = req.body.dttime[2].id;
+   //    const getStaff =  await Staff.findOne({_id: idStaff})
      
-      const nameStaff = getStaff.fullnameStaff
-      console.log(getStaff.fullnameStaff, idCooking,date,time,idStaff,nameStaff);
-      await Cooking.findOne({_id: idCooking}).then(data =>{
-         const condition = {_id: idCooking}
-         const process = {
-            $push:
-            {
-               idStaff: {$each : [idStaff] },
-               staff:   {$each: [nameStaff]}
-            }
-         }
-         Cooking.updateOne(condition, process).then(()=>{
-         })
-      })
-      await Staff.findOne({ _id: idStaff }).then(data =>{
-         const condition = { _id: idStaff }
-         const process = { 
-            $push:
-            {
-               idWork: {$each: [idCooking]},
-               time: {$each: [time]},
-               datework: {$each: [date]}
-            }
-         }
-         Staff.updateOne( condition, process ).then(()=>{
-         })
-      })
-   })
+   //    const nameStaff = getStaff.fullnameStaff
+   //    console.log(getStaff.fullnameStaff, idCooking,date,time,idStaff,nameStaff);
+   //    await Cooking.findOne({_id: idCooking}).then(data =>{
+   //       const condition = {_id: idCooking}
+   //       const process = {
+   //          $push:
+   //          {
+   //             idStaff: {$each : [idStaff] },
+   //             staff:   {$each: [nameStaff]}
+   //          }
+   //       }
+   //       Cooking.updateOne(condition, process).then(()=>{
+   //       })
+   //    })
+   //    await Staff.findOne({ _id: idStaff }).then(data =>{
+   //       const condition = { _id: idStaff }
+   //       const process = { 
+   //          $push:
+   //          {
+   //             idWork: {$each: [idCooking]},
+   //             time: {$each: [time]},
+   //             datework: {$each: [date]}
+   //          }
+   //       }
+   //       Staff.updateOne( condition, process ).then(()=>{
+   //       })
+   //    })
+   // })
 
+   router.post('/addStaff', async(req,res) =>{
+      console.log(req.body.data);
+      const t = req.body.dataStaff;
+      var keys = [];
+      var ids = [];
+      for (var key in t) {
+         if (t.hasOwnProperty(key)) {
+            if (t[key] === true){
+               ids.push(key)
+               // console.log(key);
+            }
+            }
+      }
+     for ( var i in ids){
+         // console.log(ids[i]);
+         const time= req.body.data[0].time;
+         const date = req.body.data[1].date
+         const idCooking = req.body.data[2].id;
+         const idStaff = ids[i]
+         console.log(idStaff);
+         const getStaff =  await Staff.findOne({_id: idStaff})
+         const nameStaff = getStaff.fullnameStaff
+
+         // console.log(nameStaff);
+         await Cooking.findOne({_id: idCooking}).then(data =>{
+            const condition = {_id: idCooking}
+            const process = {
+               $push:
+               {
+                  idStaff: {$each : [idStaff] },
+                  staff:   {$each: [nameStaff]}
+               }
+            }
+            Cooking.updateOne(condition, process).then(()=>{
+            })
+         })
+         await Staff.findOne({ _id: idStaff }).then(data =>{
+            const condition = { _id: idStaff }
+            const process = { 
+               $push:
+               {
+                  idWork: {$each: [idCooking]},
+                  time: {$each: [time]},
+                  datework: {$each: [date]}
+               }
+            }
+            Staff.updateOne( condition, process ).then(()=>{
+            })
+         })
+      }
+      
+      
+
+   })
 
 
 module.exports = router;
