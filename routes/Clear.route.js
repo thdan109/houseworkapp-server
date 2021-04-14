@@ -25,45 +25,16 @@ var Staff = require('../model/staff.model')
       })
    })
 
-   // router.post('/addStaff', async(req,res)=>{
-   //    // console.log(req.body);
-   //    // console.log(req.body.dttime[0].time);
-   //    // console.log(req.body.dttime[1].date)
-   //    // console.log(req.body.dttime[2].id);
-   //    const time= req.body.dttime[0].time;
-   //    const date = req.body.dttime[1].date
-   //    const idStaff = req.body.id;
-   //    const idClear = req.body.dttime[2].id;
-   //    const getStaff =  await Staff.findOne({_id: idStaff})
-     
-   //    const nameStaff = getStaff.fullnameStaff
-   //    // console.log(getStaff.fullnameStaff, idClear, date,time,idStaff,nameStaff);
-   //    await Clear.findOne({_id: idClear}).then(data =>{
-   //       const condition = {_id: idClear}
-   //       const process = {
-   //          $push:
-   //          {
-   //             idStaff: {$each : [idStaff] },
-   //             nameStaff:   {$each: [nameStaff]}
-   //          }
-   //       }
-   //       Clear.updateOne(condition, process).then(()=>{
-   //       })
-   //    })
-   //    await Staff.findOne({ _id: idStaff }).then(data =>{
-   //       const condition = { _id: idStaff }
-   //       const process = { 
-   //          $push:
-   //          {
-   //             idWork: {$each: [idClear]},
-   //             time: {$each: [time]},
-   //             datework: {$each: [date]}
-   //          }
-   //       }
-   //       Staff.updateOne( condition, process ).then(()=>{
-   //       })
-   //    })
-   // })
+   router.post('/workStaff', async(req, res) =>{
+      const work =  await Clear.find({idStaff: req.body.id, date: req.body.nowDate })
+      res.status(200).send(work)
+   })
+
+   router.post('/workStaffById',async(req,res) =>{
+      const workById = await Clear.findOne({ idStaff: req.body.idStaff, _id: req.body.idWork })
+      res.status(200).send(workById)
+   })
+
 
    router.post('/addStaff', async(req, res)=>{
       console.log(req.body.dataStaff);
@@ -84,7 +55,7 @@ var Staff = require('../model/staff.model')
          const idStaff = ids[i]
          const idClear = req.body.data[2].id;
          const getStaff =  await Staff.findOne({_id: idStaff})
-        
+         
          const nameStaff = getStaff.fullnameStaff
          // console.log(getStaff.fullnameStaff, idClear, date,time,idStaff,nameStaff);
          await Clear.findOne({_id: idClear}).then(data =>{

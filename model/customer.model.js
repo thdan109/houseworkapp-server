@@ -16,7 +16,6 @@ var userSchema = new mongoose.Schema({
    "address": String,
    "IDCard": String,
    "sex": String,
-  
    tokens: [{
       token: {
           type: String,
