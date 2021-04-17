@@ -15,7 +15,8 @@ var Staff = require('../model/staff.model')
          return token.token == req.token
       })
       const user = req.user
-      console.log(req.query);
+      const firstStatus = "Đang chờ xác nhận"
+      // console.log(req.query);
       
       var json = JSON.parse(req.query.dtdish);
       // console.log(json);     
@@ -31,8 +32,10 @@ var Staff = require('../model/staff.model')
             date: req.query.dtdate,
             dishList: dt,
             goMarket: req.query.dtMarket,
+            fruit: req.query.dtfruit,
             time: req.query.dtTime,
             number: req.query.dtnumCus,
+            status: firstStatus,
             money: req.query.dtMoney
          })
          await cooking.save()

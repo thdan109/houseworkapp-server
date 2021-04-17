@@ -24,9 +24,11 @@ router.get('/dataStaff', (req, res) =>{
    })
 })
 
-router.get('/getStaffById',authStaff, async(req, res)=>{
-   // console.log(req.user);
-   res.status(200).send(req.staff)
+router.post('/getStaffById', async(req, res)=>{
+   // console.log(req.body);
+   const staff = await dataStaff.findOne({_id: req.body.id})
+   res.status(200).send(staff)
+   // console.log(data)
 })
 
 
@@ -44,7 +46,8 @@ router.post('/statusStaffWash', async(req, res) =>{
    const dateTake = req.body.dttime[3].dateTake
    const departmentCondition ="Bộ phận giặt ủi"
    const condition = " $and: [ {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{atework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] "
-   const dataTimeWash = await dataStaff.find({ time: { $ne: timeSend}, time: {$ne: timeTake},datework : {$ne: dateSend}, datework: { $ne:  dateTake}  })
+   // const dataTimeWash = await dataStaff.find({ time: { $ne: timeSend}, time: {$ne: timeTake},datework : {$ne: dateSend}, datework: { $ne:  dateTake}  })
+   const dataTimeWash = await dataStaff.find({ condition})
    res.status(200).send(dataTimeWash)
    // console.log(dataTimeWash)
 })

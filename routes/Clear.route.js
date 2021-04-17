@@ -10,6 +10,7 @@ var Staff = require('../model/staff.model')
    })
 
    router.post('/create', async(req,res)=>{
+      const firstStatus = "Đang chờ xác nhận"
       // console.log(req.body);
       // console.log(req.body.time);
       await Clear.create({
@@ -20,6 +21,7 @@ var Staff = require('../model/staff.model')
          area: req.body.area,
          timeStart: req.body.time,
          timeWork: req.body.timework,
+         status: firstStatus,
          numRoom: req.body.numberroom,
          money: req.body.money
       })

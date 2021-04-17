@@ -7,6 +7,7 @@ var CookingSchema = new mongoose.Schema({
    "date": Date,
    "dishList": [],
    "goMarket": String,
+   "fruit":String,
    "time": String,
    "number": String,
    "idStaff": [],

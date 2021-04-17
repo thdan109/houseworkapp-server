@@ -10,6 +10,7 @@ var clearSchema = new mongoose.Schema({
    "timeStart": String,
    "idStaff": [],
    "nameStaff": [],
+   "status": String,
    "money": String
 })
 var Clear = mongoose.model('Clear',clearSchema,'clear' )

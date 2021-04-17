@@ -9,6 +9,7 @@ var Staff = require('../model/staff.model')
 
    router.post('/create', async(req,res)=>{
       // console.log(req.body.dateTake);
+      const firstStatus = 'Đang chờ xác nhận'
       const washing = await Washing.create({
          idUser: req.body.userID,
          fullname: req.body.userName,
@@ -17,6 +18,7 @@ var Staff = require('../model/staff.model')
          dateTake: req.body.dateTake,
          timeSend: req.body.sendTime,
          timeTake: req.body.takeTime,
+         status: firstStatus,
          note: req.body.note,
          money: req.body.money
       })

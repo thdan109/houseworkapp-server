@@ -9,7 +9,7 @@ var StaffSchema = new mongoose.Schema({
    "usernameStaff": String,
    "passwordStaff":String,
    "birthdayStaff": Date,
-   "numberPhone": Number,
+   "numberPhone": String,
    "addressStaff": String,
    "avatarStaff": String,
    "qrStaff": String,
