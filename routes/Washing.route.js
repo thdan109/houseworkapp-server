@@ -71,8 +71,24 @@ var Staff = require('../model/staff.model')
    //       })
    //    })
    // })
+
+   router.post('/workStaff', async(req, res) =>{
+      const work =  await Washing.find({idStaff: req.body.id, date: req.body.nowDate })
+      if (!work){
+         res.status(200).send({work: 'Failed'})
+      }else{
+         res.status(200).send(work)
+      }
+   })
+   
+   router.post('/workStaffById',async(req,res) =>{
+      const workById = await Washing.findOne({ idStaff: req.body.idStaff, _id: req.body.idWork })
+      res.status(200).send(workById)
+   })
+
    router.post('/addStaff', async(req, res)=>{
-      console.log(req.body.data);
+      // console.log(req.body.data);
+      var status = "Đã xác nhận"
       const t = req.body.dataStaff;
       var keys = [];
       var ids = [];
@@ -95,14 +111,13 @@ var Staff = require('../model/staff.model')
          const getStaff = await Staff.findOne({ _id: idStaff })
          const nameStaff = getStaff.fullnameStaff
 
-         // console.log(nameStaff);
          await Washing.findOne({ _id: idWash }).then(data =>{
             const condition = { _id: idWash }
             const process = {
                $push: 
                {
                   idStaff :{ $each: [idStaff]},
-                  staff: { $each: [nameStaff]} 
+                  staff: { $each: [nameStaff]}, 
                }
             }
             Washing.updateOne(condition, process).then(()=>{
@@ -126,5 +141,47 @@ var Staff = require('../model/staff.model')
             })
          })
       }
+
+      await Washing.findOne({ _id: req.body.data[4].id}).then(data=>{
+         const condition = { _id: req.body.data[4].id }
+         const process = { status : status  }
+         Washing.updateOne(condition,process).then(()=>{
+            
+         })
+      })
+   })
+
+   router.post('/updateStatusWorking', async(req,res) =>{
+      // console.log(req.body);
+      const id = req.body.id
+      var status = "Đang thực hiện"
+      await Washing.findOne({_id: id}).then(data=>{
+         const condition = { _id: id }
+         const process = { status: status }
+         Washing.updateOne(condition, process).then(()=>{
+            
+         })
+      })
+
+   })
+
+   router.post('/changeStatus', async(req,res)=>{
+      // console.log(req.body)
+      const id = req.body.id
+      var status = null
+      if (req.body.status == 0 ){
+         status = "Xác nhận"
+      }else if ( req.body.status == 1){
+         status = "Đang thực hiện"
+      }
+      await Washing.findOne({ _id: id}).then(data =>{
+         const condition = { _id: id }
+         const process = {
+            status : status
+         }
+         Washing.updateOne(condition, process).then(()=>{
+            res.status(200).send({notifi : "Oke"})
+         })
+      })
    })
 module.exports = router

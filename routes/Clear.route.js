@@ -6,7 +6,7 @@ var Staff = require('../model/staff.model')
    router.get('/getData', async(req,res) =>{
       const clear = await Clear.find({})
       res.status(200).send(clear)
-      console.log(clear);
+      // console.log(clear);
    })
 
    router.post('/create', async(req,res)=>{
@@ -29,7 +29,12 @@ var Staff = require('../model/staff.model')
 
    router.post('/workStaff', async(req, res) =>{
       const work =  await Clear.find({idStaff: req.body.id, date: req.body.nowDate })
-      res.status(200).send(work)
+      if (!work){
+         res.status(200).send({work: 'Failed'})
+      }else{
+         res.status(200).send(work)
+      }
+      
    })
 
    router.post('/workStaffById',async(req,res) =>{
@@ -39,7 +44,8 @@ var Staff = require('../model/staff.model')
 
 
    router.post('/addStaff', async(req, res)=>{
-      console.log(req.body.dataStaff);
+      // console.log(req.body.dataStaff);
+      var status = "Đã xác nhận"
       const t = req.body.dataStaff;
       var keys = [];
       var ids = [];
@@ -85,7 +91,47 @@ var Staff = require('../model/staff.model')
             Staff.updateOne( condition, process ).then(()=>{
             })
          })
-     }
+      }
+      await Clear.findOne({ _id :  req.body.data[2].id }).then(data =>{
+         const condition = { _id: req.body.data[2].id }
+         const process = { status: status }
+         Clear.updateOne(condition, process).then(()=>{
+
+         })
+      })
+   })
+
+   router.post('/updateStatusWorking', async(req,res) =>{
+      // console.log(req.body);
+      const id = req.body.id
+      var status = "Đang thực hiện"
+      await Clear.findOne({_id: id}).then(data=>{
+         const condition = { _id: id }
+         const process = { status: status }
+         Clear.updateOne(condition, process).then(()=>{
+            
+         })
+      })
+   })
+
+   router.post('/changeStatus', async(req,res)=>{
+      // console.log(req.body)
+      const id = req.body.id
+      var status = null
+      if (req.body.status == 0 ){
+         status = "Xác nhận"
+      }else if ( req.body.status == 1){
+         status = "Đang thực hiện"
+      }
+      await Clear.findOne({ _id: id}).then(data =>{
+         const condition = { _id: id }
+         const process = {
+            status : status
+         }
+         Clear.updateOne(condition, process).then(()=>{
+            res.status(200).send({notifi : "Oke"})
+         })
+      })
    })
 
 module.exports =  router;

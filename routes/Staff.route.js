@@ -26,9 +26,21 @@ router.get('/dataStaff', (req, res) =>{
 
 router.post('/getStaffById', async(req, res)=>{
    // console.log(req.body);
-   const staff = await dataStaff.findOne({_id: req.body.id})
-   res.status(200).send(staff)
+   const id = req.body.id
+   const staff = await dataStaff.findOne({_id: id})
+   if (!staff){
+      // console.log('sai');
+      res.status(200).send({error: "Failed!"})
+   }else{
+      // console.log('Dung');
+      res.status(200).send(staff)
+   }
+   
    // console.log(data)
+})
+
+router.get('/getStaffByIdLoading', authStaff, async(req,res) =>{
+   res.status(200).send(req.staff)
 })
 
 
@@ -39,12 +51,19 @@ router.post('/statusStaff', async(req, res)=>{
    const dts = await dataStaff.find({ $and: [{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } )
    res.status(200).send(dts)
 })
+router.post('/statusStaffCooking', async(req, res)=>{
+   const condition = "Bộ phận Nấu ăn"
+   const time = req.body.dttime[0].time
+   const date = req.body.dttime[1].date
+   const dts = await dataStaff.find({ $and: [{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } )
+   res.status(200).send(dts)
+})
 router.post('/statusStaffWash', async(req, res) =>{
    const timeSend = req.body.dttime[0].timeSend
    const timeTake = req.body.dttime[1].timeTake
    const dateSend = req.body.dttime[2].dateSend
    const dateTake = req.body.dttime[3].dateTake
-   const departmentCondition ="Bộ phận giặt ủi"
+   const departmentCondition ="Bộ phận Giặt ủi"
    const condition = " $and: [ {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{atework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] "
    // const dataTimeWash = await dataStaff.find({ time: { $ne: timeSend}, time: {$ne: timeTake},datework : {$ne: dateSend}, datework: { $ne:  dateTake}  })
    const dataTimeWash = await dataStaff.find({ condition})

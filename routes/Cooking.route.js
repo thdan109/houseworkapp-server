@@ -86,8 +86,9 @@ var Staff = require('../model/staff.model')
    // })
 
    router.post('/addStaff', async(req,res) =>{
-      console.log(req.body.data);
+      // console.log(req.body.data);
       const t = req.body.dataStaff;
+      var status = "Đã xác nhận"
       var keys = [];
       var ids = [];
       for (var key in t) {
@@ -98,16 +99,15 @@ var Staff = require('../model/staff.model')
             }
             }
       }
-     for ( var i in ids){
+      for ( var i in ids){
          // console.log(ids[i]);
          const time= req.body.data[0].time;
          const date = req.body.data[1].date
          const idCooking = req.body.data[2].id;
          const idStaff = ids[i]
-         console.log(idStaff);
          const getStaff =  await Staff.findOne({_id: idStaff})
          const nameStaff = getStaff.fullnameStaff
-
+         
          // console.log(nameStaff);
          await Cooking.findOne({_id: idCooking}).then(data =>{
             const condition = {_id: idCooking}
@@ -115,8 +115,8 @@ var Staff = require('../model/staff.model')
                $push:
                {
                   idStaff: {$each : [idStaff] },
-                  staff:   {$each: [nameStaff]}
-               }
+                  staff:   {$each: [nameStaff]},
+               },
             }
             Cooking.updateOne(condition, process).then(()=>{
             })
@@ -135,10 +135,63 @@ var Staff = require('../model/staff.model')
             })
          })
       }
-      
-      
+
+      await Cooking.findOne({_id: req.body.data[2].id}).then(data =>{
+         const condition = { _id: req.body.data[2].id }
+         const process = { status: status }
+         Cooking.updateOne(condition, process).then(()=>{
+
+         })
+      })
+
+   })
+   router.post('/updateStatusWorking', async(req,res) =>{
+      // console.log(req.body);
+      const id = req.body.id
+      var status = "Đang thực hiện"
+      await Cooking.findOne({_id: id}).then(data=>{
+         const condition = { _id: id }
+         const process = { status: status }
+         Cooking.updateOne(condition, process).then(()=>{
+            
+         })
+      })
 
    })
 
+   router.post('/workStaff', async(req, res) =>{
+      const work =  await Cooking.find({idStaff: req.body.id, date: req.body.nowDate })
+      if (!work){
+         res.status(200).send({work: 'Failed'})
+      }else{
+         res.status(200).send(work)
+      }
+      
+   })
+   
+   router.post('/workStaffById',async(req,res) =>{
+      const workById = await Cooking.findOne({ idStaff: req.body.idStaff, _id: req.body.idWork })
+      res.status(200).send(workById)
+   })
+
+   router.post('/changeStatus', async(req,res)=>{
+      // console.log(req.body)
+      const id = req.body.id
+      var status = null
+      if (req.body.status == 0 ){
+         status = "Xác nhận"
+      }else if ( req.body.status == 1){
+         status = "Đang thực hiện"
+      }
+      await Cooking.findOne({ _id: id}).then(data =>{
+         const condition = { _id: id }
+         const process = {
+            status : status
+         }
+         Cooking.updateOne(condition, process).then(()=>{
+            res.status(200).send({notifi : "Oke"})
+         })
+      })
+   })
 
 module.exports = router;
