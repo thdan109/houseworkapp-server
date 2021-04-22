@@ -3,6 +3,8 @@ const auth = require('../middleware/auth');
 var router = express.Router();
 var Cooking = require('../model/cooking.model')
 var Staff = require('../model/staff.model')
+var User = require('../model/customer.model')
+const { default: Axios } = require('axios');
 
    router.get('/dataCooking',async(req,res)=>{
       Cooking.find({}).then(data=>{
@@ -45,45 +47,6 @@ var Staff = require('../model/staff.model')
       }
    })
 
-   // router.post('/addStaff', async(req,res)=>{
-   //    // console.log(req.body);
-   //    // console.log(req.body.dttime[0].time);
-   //    // console.log(req.body.dttime[1].date)
-   //    // console.log(req.body.dttime[2].id);
-   //    const time= req.body.dttime[0].time;
-   //    const date = req.body.dttime[1].date
-   //    const idStaff = req.body.id;
-   //    const idCooking = req.body.dttime[2].id;
-   //    const getStaff =  await Staff.findOne({_id: idStaff})
-     
-   //    const nameStaff = getStaff.fullnameStaff
-   //    console.log(getStaff.fullnameStaff, idCooking,date,time,idStaff,nameStaff);
-   //    await Cooking.findOne({_id: idCooking}).then(data =>{
-   //       const condition = {_id: idCooking}
-   //       const process = {
-   //          $push:
-   //          {
-   //             idStaff: {$each : [idStaff] },
-   //             staff:   {$each: [nameStaff]}
-   //          }
-   //       }
-   //       Cooking.updateOne(condition, process).then(()=>{
-   //       })
-   //    })
-   //    await Staff.findOne({ _id: idStaff }).then(data =>{
-   //       const condition = { _id: idStaff }
-   //       const process = { 
-   //          $push:
-   //          {
-   //             idWork: {$each: [idCooking]},
-   //             time: {$each: [time]},
-   //             datework: {$each: [date]}
-   //          }
-   //       }
-   //       Staff.updateOne( condition, process ).then(()=>{
-   //       })
-   //    })
-   // })
 
    router.post('/addStaff', async(req,res) =>{
       // console.log(req.body.data);
@@ -103,11 +66,21 @@ var Staff = require('../model/staff.model')
          // console.log(ids[i]);
          const time= req.body.data[0].time;
          const date = req.body.data[1].date
-         const idCooking = req.body.data[2].id;
+         const idCooking = req.body.data[3].id;
+         const idUser = req.body.data[2].idUser;
          const idStaff = ids[i]
          const getStaff =  await Staff.findOne({_id: idStaff})
          const nameStaff = getStaff.fullnameStaff
          
+         const user = await User.findOne({ _id: idUser})
+         const dataCooking = await Cooking.findOne({ _id: idCooking})
+
+         for ( var i of user.tokens){
+            sendPushNotification(i.tokenDevices, status,dataCooking.date.toDateString())
+         }
+
+         
+
          // console.log(nameStaff);
          await Cooking.findOne({_id: idCooking}).then(data =>{
             const condition = {_id: idCooking}
@@ -193,5 +166,25 @@ var Staff = require('../model/staff.model')
          })
       })
    })
+
+   async function sendPushNotification(expoPushToken,i,date) {
+      var text = 'Việc của bạn đã được xác nhận'
+    
+      const message = {
+        to: expoPushToken,
+        sound: 'default',
+        title: 'Nấu ăn: '+ date,
+        body: text,
+        data: { data: 'goes here' },
+      };
+      await Axios.post('https://exp.host/--/api/v2/push/send', JSON.stringify(message), {
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
+       
+      });
+    }
 
 module.exports = router;

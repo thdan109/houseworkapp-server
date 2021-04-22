@@ -1,7 +1,9 @@
 var express = require('express')
 var router = express.Router()
 var Clear = require('../model/clear.model')
+const User = require('../model/customer.model')
 var Staff = require('../model/staff.model')
+const { default: Axios } = require('axios');
 
    router.get('/getData', async(req,res) =>{
       const clear = await Clear.find({})
@@ -53,7 +55,6 @@ var Staff = require('../model/staff.model')
          if (t.hasOwnProperty(key)) {
             if (t[key] === true){
                ids.push(key)
-               // console.log(key);
             }
             }
       }
@@ -62,10 +63,16 @@ var Staff = require('../model/staff.model')
          const date = req.body.data[1].date
          const idStaff = ids[i]
          const idClear = req.body.data[2].id;
+         const idUser = req.body.data[3].idUser;
          const getStaff =  await Staff.findOne({_id: idStaff})
          
+         const user = await User.findOne({_id: idUser})
+         const dataclear = await Clear.findOne({ _id: idClear })
+         for ( var i of user.tokens){
+            sendPushNotification(i.tokenDevices, status,dataclear.date.toDateString())
+         }
          const nameStaff = getStaff.fullnameStaff
-         // console.log(getStaff.fullnameStaff, idClear, date,time,idStaff,nameStaff);
+         
          await Clear.findOne({_id: idClear}).then(data =>{
             const condition = {_id: idClear}
             const process = {
@@ -96,9 +103,14 @@ var Staff = require('../model/staff.model')
          const condition = { _id: req.body.data[2].id }
          const process = { status: status }
          Clear.updateOne(condition, process).then(()=>{
-
          })
       })
+
+      
+
+
+
+
    })
 
    router.post('/updateStatusWorking', async(req,res) =>{
@@ -109,7 +121,7 @@ var Staff = require('../model/staff.model')
          const condition = { _id: id }
          const process = { status: status }
          Clear.updateOne(condition, process).then(()=>{
-            
+            res.status(200).send({update: 'Oke'})
          })
       })
    })
@@ -132,6 +144,30 @@ var Staff = require('../model/staff.model')
             res.status(200).send({notifi : "Oke"})
          })
       })
+
+
    })
+
+
+   async function sendPushNotification(expoPushToken,i,date) {
+      var text = 'Việc của bạn đã được xác nhận'
+    
+      const message = {
+        to: expoPushToken,
+        sound: 'default',
+        title: 'Dọn nhà: '+ date,
+        body: text,
+        data: { data: 'goes here' },
+      };
+
+      await Axios.post('https://exp.host/--/api/v2/push/send', JSON.stringify(message), {
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
+       
+      });
+    }
 
 module.exports =  router;

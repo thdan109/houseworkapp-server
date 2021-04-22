@@ -108,15 +108,16 @@ router.post('/login',async(req,res) =>{
    // console.log(req.body);
    const usernameStaff = req.body.usernameStaff
    const passwordStaff = req.body.passwordStaff
+   const tokenDevice = req.body.tokenDevice
    // console.log(username, password);
    try
       {
-         tokenDevices = "tokenDevices"
+         // tokenDevices = "tokenDevices"
          const staff = await dataStaff.findByCredentials(usernameStaff, passwordStaff)
          if (!staff) {
             return res.status(401).send({error: 'Login failed! Check authentication credentials'})
          }
-         const token = await staff.generateAuthToken(tokenDevices)
+         const token = await staff.generateAuthToken(tokenDevice)
          res.status(201).send({staff, token})
       }catch (error) { 
          res.status(400).send(error)

@@ -43,7 +43,7 @@ userSchema.pre('save', async function (next) {
    // Generate an auth token for the user
    const user = this
    const token = jwt.sign({_id: user._id},'hdan') 
-   user.tokens = user.tokens.concat({token,tokenDevices:'tokenDevices'})
+   user.tokens = user.tokens.concat({token,tokenDevices})
    
    await user.save()
    return token

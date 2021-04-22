@@ -59,26 +59,22 @@ router.post('/register',async(req,res)=>{
    router.post('/login', async(req, res) => {
       const username = req.body.usernameCus;
       const password = req.body.passwordCus;
+      const tokenDevice = req.body.tokenDevice
+      // console.log(tokenDevice);
       //Login a registered user
       // console.log(username, password);
       try {
-         //  const { username, password } = req.body
-         tokenDevices = "tokenDevices"
+         // console.log(tokenDevice)
          const user = await User.findByCredentials(username, password)
          if (!user) {
             return res.status(401).send({error: 'Login failed! Check authentication credentials'})
          }
-         // console.log(user);
          // console.log(user.tokenDevices.indexOf(tokenDevices));
          // if(user.tokenDevices.indexOf(tokenDevices)===-1){
          //   user.tokenDevices.push(tokenDevices);
          // }
-
-         const token = await user.generateAuthToken(tokenDevices)
-
+         const token = await user.generateAuthToken(tokenDevice)
          res.status(201).send({user, token})
-         // res.status(200).send(user)
-         // console.log(user);
       } catch (error) { 
          res.status(400).send(error)
       }

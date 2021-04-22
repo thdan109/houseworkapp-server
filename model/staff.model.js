@@ -48,7 +48,7 @@ StaffSchema.methods.generateAuthToken = async function(tokenDevices) {
    // Generate an auth token for the user
    const staff = this
    const token = jwt.sign({_id: staff._id},'hdan') 
-   staff.tokens = staff.tokens.concat({token,tokenDevices:'tokenDevices'})
+   staff.tokens = staff.tokens.concat({token,tokenDevices})
    await staff.save()
    return token
   

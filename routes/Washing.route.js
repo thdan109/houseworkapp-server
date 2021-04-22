@@ -2,6 +2,8 @@ var express = require('express')
 var router = express.Router()
 var Washing = require('../model/washing.model')
 var Staff = require('../model/staff.model')
+const { default: Axios } = require('axios');
+var User = require('../model/customer.model')
    router.get('/getData', async(req,res)=>{
       const dataWashing = await Washing.find({})
       res.status(200).send((dataWashing)) 
@@ -108,8 +110,16 @@ var Staff = require('../model/staff.model')
          const dateSend = req.body.data[2].dateSend
          const dateTake = req.body.data[3].dateTake
          const idWash = req.body.data[4].id
+         const idUser = req.body.data[5].idUser
          const getStaff = await Staff.findOne({ _id: idStaff })
          const nameStaff = getStaff.fullnameStaff
+
+         const user = await User.findOne({ _id: idUser})
+         const dataWashing = await Washing.findOne({ _id: idWash})
+
+         for ( var i of user.tokens){
+            sendPushNotification(i.tokenDevices, status,dataWashing.date.toDateString())
+         }
 
          await Washing.findOne({ _id: idWash }).then(data =>{
             const condition = { _id: idWash }
@@ -184,4 +194,23 @@ var Staff = require('../model/staff.model')
          })
       })
    })
+   async function sendPushNotification(expoPushToken,i,date) {
+      var text = 'Việc của bạn đã được xác nhận'
+    
+      const message = {
+        to: expoPushToken,
+        sound: 'default',
+        title: 'Giặt đồ: '+ date,
+        body: text,
+        data: { data: 'goes here' },
+      };
+      await Axios.post('https://exp.host/--/api/v2/push/send', JSON.stringify(message), {
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
+       
+      });
+    }
 module.exports = router
