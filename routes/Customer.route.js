@@ -170,10 +170,10 @@ router.post('/imageUser',uploadUser.single('photo'),  async(req, res)=>{
       })
       const user = req.user
       const id = user._id
-      const orderCooking = await Cooking.find({ idUser: id })
+      const orderCooking = await Cooking.find({$and: [{idUser: id}, {status: {$ne: "Chờ thu tiền"}}]})
       // const newOrder = {...order._doc, Service: 'Cooking'}
-      const orderWashing = await Washing.find({idUser: id})
-      const orderClear = await Clear.find({ idUser: id })
+      const orderWashing = await Washing.find({$and: [{idUser: id}, {status: {$ne: "Chờ thu tiền"}}]})
+      const orderClear = await Clear.find({$and: [{idUser: id}, {status: {$ne: "Chờ thu tiền"}}]})
       res.status(200).send({orderCooking, orderClear, orderWashing})
       // console.log(orderWashing);
       // console.log(orderWashing);

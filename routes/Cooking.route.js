@@ -47,6 +47,19 @@ const { default: Axios } = require('axios');
       }
    })
 
+   router.post('/confirmWork', async(req,res)=>{
+      // console.log(req.body)
+      await Cooking.findOne({_id: req.body.id}).then(data =>{
+         const condition = {_id: req.body.id}
+         const process = {
+            status: req.body.status
+         }
+         Cooking.updateOne(condition, process).then(()=>{
+            
+         })
+
+      }) 
+   })
 
    router.post('/addStaff', async(req,res) =>{
       // console.log(req.body.data);

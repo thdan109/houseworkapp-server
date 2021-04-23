@@ -8,7 +8,7 @@ const { default: Axios } = require('axios');
    router.get('/getData', async(req,res) =>{
       const clear = await Clear.find({})
       res.status(200).send(clear)
-      // console.log(clear);
+      
    })
 
    router.post('/create', async(req,res)=>{
@@ -37,6 +37,20 @@ const { default: Axios } = require('axios');
          res.status(200).send(work)
       }
       
+   })
+
+   router.post('/confirmWork', async(req,res)=>{
+      // console.log(req.body)
+      await Clear.findOne({_id: req.body.id}).then(data =>{
+         const condition = {_id: req.body.id}
+         const process = {
+            status: req.body.status
+         }
+         Clear.updateOne(condition, process).then(()=>{
+            res.send(200)
+         })
+
+      }) 
    })
 
    router.post('/workStaffById',async(req,res) =>{
@@ -68,6 +82,10 @@ const { default: Axios } = require('axios');
          
          const user = await User.findOne({_id: idUser})
          const dataclear = await Clear.findOne({ _id: idClear })
+         for (var i of getStaff.tokens ){
+            sendPushNotificationStaff( i.tokenDevices, dataclear.timeStart,dataclear.date.toDateString() )
+         }
+
          for ( var i of user.tokens){
             sendPushNotification(i.tokenDevices, status,dataclear.date.toDateString())
          }
@@ -105,12 +123,6 @@ const { default: Axios } = require('axios');
          Clear.updateOne(condition, process).then(()=>{
          })
       })
-
-      
-
-
-
-
    })
 
    router.post('/updateStatusWorking', async(req,res) =>{
@@ -147,11 +159,27 @@ const { default: Axios } = require('axios');
 
 
    })
-
+   async function sendPushNotificationStaff(expoPushToken,i,date) {
+      var text = i + ' giờ ' + date
+      const message = {
+        to: expoPushToken,
+        sound: 'default',
+        title: 'Đã thêm một việc',
+        body: text,
+        data: { data: 'goes here' },
+      };
+      await Axios.post('https://exp.host/--/api/v2/push/send', JSON.stringify(message), {
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
+       
+      });
+    }
 
    async function sendPushNotification(expoPushToken,i,date) {
       var text = 'Việc của bạn đã được xác nhận'
-    
       const message = {
         to: expoPushToken,
         sound: 'default',
@@ -159,7 +187,6 @@ const { default: Axios } = require('axios');
         body: text,
         data: { data: 'goes here' },
       };
-
       await Axios.post('https://exp.host/--/api/v2/push/send', JSON.stringify(message), {
         headers: {
           Accept: 'application/json',

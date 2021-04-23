@@ -27,52 +27,19 @@ var User = require('../model/customer.model')
 
    })
 
-   // router.post('/addStaff', async(req,res)=>{
-      
-   //    // console.log(req.body);
-   //    const timeSend = req.body.dttime[0].timeSend
-   //    const timeTake = req.body.dttime[1].timeTake
-   //    const dateSend = req.body.dttime[2].dateSend
-   //    const dateTake = req.body.dttime[3].dateTake
-   //    const idStaff = req.body.id;
-   //    const idWash = req.body.dttime[4].id
-
-   //    const getStaff = await Staff.findOne({ _id: idStaff })
-
-   //    const nameStaff = getStaff.fullnameStaff
-   //    // console.log(getStaff);
-   //    // console.log(idStaff,idWash);
-
-   //    await Washing.findOne({ _id: idWash }).then(data =>{
-   //       const condition = { _id: idWash }
-   //       const process = {
-   //          $push: 
-   //          {
-   //             idStaff :{ $each: [idStaff]},
-   //             staff: { $each: [nameStaff]} 
-   //          }
-   //       }
-   //       Washing.updateOne(condition, process).then(()=>{
-
-   //       })
-   //    })
-
-   //    await Staff.findOne({ _id: idStaff}).then(data =>{
-   //       const condition= {_id: idStaff}
-   //       const process = {
-   //          $push: {
-   //             idWork: {$each: [idWash]},
-   //             time: {$each: [timeTake]},
-   //             time: {$each: [timeSend]},
-   //             datework: {$each: [dateTake]},
-   //             datework: {$each: [dateSend]}
-   //          }
-   //       }
-   //       Staff.updateOne(condition, process).then(()=>{
+   router.post('/confirmWork', async(req,res)=>{
+      // console.log(req.body)
+      await Washing.findOne({_id: req.body.id}).then(data =>{
+         const condition = {_id: req.body.id}
+         const process = {
+            status: req.body.status
+         }
+         Washing.updateOne(condition, process).then(()=>{
             
-   //       })
-   //    })
-   // })
+         })
+
+      }) 
+   })
 
    router.post('/workStaff', async(req, res) =>{
       const work =  await Washing.find({idStaff: req.body.id, date: req.body.nowDate })

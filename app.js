@@ -22,6 +22,7 @@ var ServiceRoute = require('./routes/Service.route')
 var CookingRoute = require('./routes/Cooking.route')
 var ClearRoute = require('./routes/Clear.route')
 var WashingRoute = require('./routes/Washing.route')
+var LeaveRoute = require('./routes/Leave.route')
 app.use(cors())
 
 // view engine setup
@@ -46,6 +47,7 @@ app.use('/service', ServiceRoute)
 app.use('/cooking',CookingRoute)
 app.use('/clear', ClearRoute)
 app.use('/washing', WashingRoute)
+app.use('/leave', LeaveRoute)
 
 
 
