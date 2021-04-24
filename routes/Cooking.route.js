@@ -88,6 +88,10 @@ const { default: Axios } = require('axios');
          const user = await User.findOne({ _id: idUser})
          const dataCooking = await Cooking.findOne({ _id: idCooking})
 
+         for (var i of getStaff.tokens ){
+            sendPushNotificationStaff( i.tokenDevices, dataclear.timeStart,dataclear.date.toDateString() )
+         }
+
          for ( var i of user.tokens){
             sendPushNotification(i.tokenDevices, status,dataCooking.date.toDateString())
          }
@@ -180,6 +184,24 @@ const { default: Axios } = require('axios');
       })
    })
 
+   async function sendPushNotificationStaff(expoPushToken,i,date) {
+      var text = i + ' giờ ' + date
+      const message = {
+        to: expoPushToken,
+        sound: 'default',
+        title: 'Đã thêm một việc',
+        body: text,
+        data: { data: 'goes here' },
+      };
+      await Axios.post('https://exp.host/--/api/v2/push/send', JSON.stringify(message), {
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
+       
+      });
+    }
    async function sendPushNotification(expoPushToken,i,date) {
       var text = 'Việc của bạn đã được xác nhận'
     

@@ -10,6 +10,9 @@ const { default: Axios } = require('axios');
       res.status(200).send(clear)
       
    })
+   router.post('/test', async(req,res)=>{
+      console.log(req.body);
+   })
 
    router.post('/create', async(req,res)=>{
       const firstStatus = "Đang chờ xác nhận"
@@ -36,7 +39,7 @@ const { default: Axios } = require('axios');
       }else{
          res.status(200).send(work)
       }
-      
+   
    })
 
    router.post('/confirmWork', async(req,res)=>{

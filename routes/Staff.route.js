@@ -66,7 +66,7 @@ router.post('/statusStaffWash', async(req, res) =>{
    const departmentCondition ="Bộ phận Giặt ủi"
    const condition = " $and: [ {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{atework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] "
    // const dataTimeWash = await dataStaff.find({ time: { $ne: timeSend}, time: {$ne: timeTake},datework : {$ne: dateSend}, datework: { $ne:  dateTake}  })
-   const dataTimeWash = await dataStaff.find({ condition})
+   const dataTimeWash = await dataStaff.find({ $and: [ {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{atework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] })
    res.status(200).send(dataTimeWash)
    // console.log(dataTimeWash)
 })

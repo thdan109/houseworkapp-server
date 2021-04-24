@@ -42,21 +42,23 @@ var User = require('../model/customer.model')
    })
 
    router.post('/workStaff', async(req, res) =>{
-      const work =  await Washing.find({idStaff: req.body.id, date: req.body.nowDate })
+      const work =  await Washing.find({idStaff: req.body.id, dateSend: req.body.nowDate })
       if (!work){
          res.status(200).send({work: 'Failed'})
       }else{
          res.status(200).send(work)
+         // console.log(work);
       }
    })
    
    router.post('/workStaffById',async(req,res) =>{
       const workById = await Washing.findOne({ idStaff: req.body.idStaff, _id: req.body.idWork })
       res.status(200).send(workById)
+      // console.log(workById);
    })
 
    router.post('/addStaff', async(req, res)=>{
-      // console.log(req.body.data);
+      console.log(req.body.data);
       var status = "Đã xác nhận"
       const t = req.body.dataStaff;
       var keys = [];
@@ -76,13 +78,17 @@ var User = require('../model/customer.model')
          const timeTake = req.body.data[1].timeTake
          const dateSend = req.body.data[2].dateSend
          const dateTake = req.body.data[3].dateTake
-         const idWash = req.body.data[4].id
-         const idUser = req.body.data[5].idUser
+         const idWash = req.body.data[5].id
+         const idUser = req.body.data[4].idUser
          const getStaff = await Staff.findOne({ _id: idStaff })
          const nameStaff = getStaff.fullnameStaff
 
          const user = await User.findOne({ _id: idUser})
          const dataWashing = await Washing.findOne({ _id: idWash})
+
+         for (var i of getStaff.tokens ){
+            sendPushNotificationStaff( i.tokenDevices, dataWashing.timeSend,dataWashing.dateSend.toDateString() )
+         }
 
          for ( var i of user.tokens){
             sendPushNotification(i.tokenDevices, status,dataWashing.date.toDateString())
@@ -161,6 +167,25 @@ var User = require('../model/customer.model')
          })
       })
    })
+
+   async function sendPushNotificationStaff(expoPushToken,i,date) {
+      var text = i + ' giờ ' + date
+      const message = {
+        to: expoPushToken,
+        sound: 'default',
+        title: 'Đã thêm một việc',
+        body: text,
+        data: { data: 'goes here' },
+      };
+      await Axios.post('https://exp.host/--/api/v2/push/send', JSON.stringify(message), {
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
+       
+      });
+    }
    async function sendPushNotification(expoPushToken,i,date) {
       var text = 'Việc của bạn đã được xác nhận'
     
