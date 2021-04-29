@@ -26,6 +26,8 @@ var LeaveRoute = require('./routes/Leave.route')
 var ClearSaveRoute = require('./routes/ClearSave.route')
 var WashingSaveRoute = require('./routes/WashingSave.route')
 var CookingSaveRoute = require('./routes/CookingSave.route')
+var ReportStaffRoute = require('./routes/ReportStaff.route')
+var FeedBackRoute = require('./routes/FeedBack.route')
 app.use(cors())
 
 // view engine setup
@@ -54,6 +56,8 @@ app.use('/leave', LeaveRoute)
 app.use('/clearsave', ClearSaveRoute)
 app.use('/washingsave', WashingSaveRoute)
 app.use('/cookingsave', CookingSaveRoute)
+app.use('/reportstaff', ReportStaffRoute)
+app.use('/feedback', FeedBackRoute)
 
 
 

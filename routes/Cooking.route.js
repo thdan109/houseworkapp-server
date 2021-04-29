@@ -4,12 +4,21 @@ var router = express.Router();
 var Cooking = require('../model/cooking.model')
 var Staff = require('../model/staff.model')
 var User = require('../model/customer.model')
+var Service = require('../model/service.model')
 const { default: Axios } = require('axios');
 
    router.get('/dataCooking',async(req,res)=>{
       Cooking.find({}).then(data=>{
          res.json(data)
       })
+   })
+
+   router.get('/getDataForApp', async(req, res) =>{
+      const dataForApp = await Service.findOne({type: "cooking"})
+      // res.status(200).send(dataForApp)
+      const a = dataForApp.prince.map(dt => dt.split(' : '))
+      const data = a.map(dt1=>(dt1[1]))
+      res.status(200).send({dataForApp,data})
    })
 
    router.get('/create',auth,async(req, res)=>{
@@ -41,7 +50,7 @@ const { default: Axios } = require('axios');
             money: req.query.dtMoney
          })
          await cooking.save()
-         console.log('oke');
+         res.status(200).send({status: 'Oke'})
       }catch{
         console.log('aaaa');
       }
@@ -114,17 +123,25 @@ const { default: Axios } = require('axios');
          await Staff.findOne({ _id: idStaff }).then(data =>{
             const condition = { _id: idStaff }
             const process = { 
-               $push:
+            $push:
                {
                   idWork: {$each: [idCooking]},
                   time: {$each: [time]},
-                  datework: {$each: [date]}
+                  datework: {$each: [date]},
                }
             }
             Staff.updateOne( condition, process ).then(()=>{
+            }) 
+            const process1 ={ $inc:  { numberWorkMonth: 1 }}
+            Staff.updateOne( condition, process1).then(()=>{
+
             })
          })
+         
+        
       }
+
+      
 
       await Cooking.findOne({_id: req.body.data[2].id}).then(data =>{
          const condition = { _id: req.body.data[2].id }
@@ -151,6 +168,16 @@ const { default: Axios } = require('axios');
 
    router.post('/workStaff', async(req, res) =>{
       const work =  await Cooking.find({idStaff: req.body.id, date: req.body.nowDate })
+      if (!work){
+         res.status(200).send({work: 'Failed'})
+      }else{
+         res.status(200).send(work)
+      }
+      
+   })
+
+   router.post('/workStaffAll', async(req, res) =>{
+      const work =  await Cooking.find({idStaff: req.body.id})
       if (!work){
          res.status(200).send({work: 'Failed'})
       }else{

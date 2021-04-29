@@ -20,4 +20,11 @@ router.post('/create', async(req, res )=>{
    })
    res.status(200).send({status: 'Successfully!'})
 })
+
+
+router.post('/dataLeaveById', async(req,res) =>{
+   
+   const data = await Leave.find({idStaff: req.body.id})
+   res.status(200).send(data)
+})
 module.exports = router

@@ -50,6 +50,16 @@ var User = require('../model/customer.model')
          // console.log(work);
       }
    })
+
+   router.post('/workStaff', async(req, res) =>{
+      const work =  await Washing.find({idStaff: req.body.id })
+      if (!work){
+         res.status(200).send({work: 'Failed'})
+      }else{
+         res.status(200).send(work)
+      }
+   
+   })
    
    router.post('/workStaffById',async(req,res) =>{
       const workById = await Washing.findOne({ idStaff: req.body.idStaff, _id: req.body.idWork })
@@ -164,6 +174,10 @@ var User = require('../model/customer.model')
          }
          Washing.updateOne(condition, process).then(()=>{
             res.status(200).send({notifi : "Oke"})
+         })
+         const process1 ={ $inc:  { numberWorkMonth: 1 }}
+         Staff.updateOne( condition, process1).then(()=>{
+
          })
       })
    })

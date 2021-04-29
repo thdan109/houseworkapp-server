@@ -3,6 +3,7 @@ var router = express.Router()
 var Clear = require('../model/clear.model')
 const User = require('../model/customer.model')
 var Staff = require('../model/staff.model')
+var Service = require('../model/service.model')
 const { default: Axios } = require('axios');
 
    router.get('/getData', async(req,res) =>{
@@ -10,9 +11,21 @@ const { default: Axios } = require('axios');
       res.status(200).send(clear)
       
    })
+
+   router.get('/getDataForApp', async(req, res) =>{
+      const dataForApp = await Service.findOne({type: "clear"})
+      // res.status(200).send(dataForApp)
+
+      const a = dataForApp.prince.map(dt => dt.split(' : '))
+      const data = a.map(dt1=>(dt1[1])) 
+      res.status(200).send({dataForApp,data})
+   })
+
    router.post('/test', async(req,res)=>{
       console.log(req.body);
    })
+
+
 
    router.post('/create', async(req,res)=>{
       const firstStatus = "Đang chờ xác nhận"
@@ -34,6 +47,15 @@ const { default: Axios } = require('axios');
 
    router.post('/workStaff', async(req, res) =>{
       const work =  await Clear.find({idStaff: req.body.id, date: req.body.nowDate })
+      if (!work){
+         res.status(200).send({work: 'Failed'})
+      }else{
+         res.status(200).send(work)
+      }
+   
+   })
+   router.post('/workStaffAll', async(req, res) =>{
+      const work =  await Clear.find({idStaff: req.body.id })
       if (!work){
          res.status(200).send({work: 'Failed'})
       }else{
@@ -108,6 +130,7 @@ const { default: Axios } = require('axios');
          })
          await Staff.findOne({ _id: idStaff }).then(data =>{
             const condition = { _id: idStaff }
+          
             const process = { 
                $push:
                {
@@ -117,6 +140,10 @@ const { default: Axios } = require('axios');
                }
             }
             Staff.updateOne( condition, process ).then(()=>{
+            })
+            const process1 ={ $inc:  { numberWorkMonth: 1 }}
+            Staff.updateOne( condition, process1).then(()=>{
+
             })
          })
       }

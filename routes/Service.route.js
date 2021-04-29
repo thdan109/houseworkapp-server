@@ -10,6 +10,7 @@ router.get('/dataService', async(req,res) =>{
       res.json(data)
    })
 })
+
 router.get('/dataServiceByID/id=:id', async(req,res) =>{
    // console.log(req.params.id)
    const data = await Service.findOne({ _id: req.params.id  })
@@ -24,6 +25,7 @@ router.post('/addService', function(req,res){
    a.push(req.body.dataSend.value) 
    // console.log(a);
    Service.create({
+      type: req.body.dataSend.type,
       nameService: req.body.dataSend.nameService,
       descriptionService: req.body.dataSend.discription,
       prince: a
@@ -46,7 +48,7 @@ router.post('/updataService', async(req,res) =>{
          
       }
    }
-   console.log(prince)
+   // console.log(prince)
    const id = req.body.id;
    console.log(req.body.id);
    Service.findOne({ _id: id}).then(data =>{

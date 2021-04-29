@@ -23,6 +23,7 @@ var StaffSchema = new mongoose.Schema({
    "idWork": [],
    "time": [String],
    "datework": [String],
+   "numberWorkMonth":Number,
    tokens: [{
       token: {
           type: String,
