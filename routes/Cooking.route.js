@@ -44,7 +44,7 @@ const { default: Axios } = require('axios');
             dishList: dt,
             goMarket: req.query.dtMarket,
             fruit: req.query.dtfruit,
-            time: req.query.dtTime,
+            timeStart: req.query.dtTime,
             number: req.query.dtnumCus,
             status: firstStatus,
             money: req.query.dtMoney
@@ -98,14 +98,12 @@ const { default: Axios } = require('axios');
          const dataCooking = await Cooking.findOne({ _id: idCooking})
 
          for (var i of getStaff.tokens ){
-            sendPushNotificationStaff( i.tokenDevices, dataclear.timeStart,dataclear.date.toDateString() )
+            sendPushNotificationStaff( i.tokenDevices, dataCooking.timeStart,dataCooking.date.toDateString() )
          }
 
          for ( var i of user.tokens){
             sendPushNotification(i.tokenDevices, status,dataCooking.date.toDateString())
          }
-
-         
 
          // console.log(nameStaff);
          await Cooking.findOne({_id: idCooking}).then(data =>{
@@ -137,14 +135,39 @@ const { default: Axios } = require('axios');
 
             })
          })
-         
-        
+
+         const idCookingChat = req.body.data[3].id;
+         const idUserChat = req.body.data[2].idUser;
+         await Chat.findOne({idRoom: idCookingChat}).then( result =>{
+               if (result === null) {
+                  Chat.create({
+                     idRoom: idCookingChat,
+                     idStaff: ids,
+                     idUser: idUserChat
+                  })
+                  console.log('Tao xong roi');
+               }else{
+                  for (var i in ids){
+                     const condition = {idRoom: idCookingChat}
+                     const process = {
+                        $push:{
+                           idStaff: {$each: [ids[i]]}
+                        }
+                     }
+                     Chat.updateOne(condition, process).then(()=>{
+
+                     })
+                  }
+                  console.log('Update dc');
+               }
+               
+                     
+         }).catch( err =>{
+
+         })
       }
-
-      
-
-      await Cooking.findOne({_id: req.body.data[2].id}).then(data =>{
-         const condition = { _id: req.body.data[2].id }
+      await Cooking.findOne({_id: req.body.data[3].id}).then(data =>{
+         const condition = { _id: req.body.data[3].id }
          const process = { status: status }
          Cooking.updateOne(condition, process).then(()=>{
 

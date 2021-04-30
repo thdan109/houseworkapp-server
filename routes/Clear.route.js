@@ -4,6 +4,7 @@ var Clear = require('../model/clear.model')
 const User = require('../model/customer.model')
 var Staff = require('../model/staff.model')
 var Service = require('../model/service.model')
+var Chat = require('../model/chat.model')
 const { default: Axios } = require('axios');
 
    router.get('/getData', async(req,res) =>{
@@ -97,6 +98,7 @@ const { default: Axios } = require('axios');
             }
             }
       }
+      console.log(ids);
       for ( var i in ids){
          const time= req.body.data[0].time;
          const date = req.body.data[1].date
@@ -153,6 +155,37 @@ const { default: Axios } = require('axios');
          Clear.updateOne(condition, process).then(()=>{
          })
       })
+      const idClearChat = req.body.data[2].id;
+      const idUserChat = req.body.data[3].idUser;
+      await Chat.findOne({idRoom: idClearChat}).then( result =>{
+            if (result === null) {
+               Chat.create({
+                  idRoom: idClearChat,
+                  idStaff: ids,
+                  idUser: idUserChat
+               })
+               // console.log('Tao xong roi');
+            }else{
+               for (var i in ids){
+                  const condition = {idRoom: idClearChat}
+                  const process = {
+                     $push:{
+                        idStaff: {$each: [ids[i]]}
+                     }
+                  }
+                  Chat.updateOne(condition, process).then(()=>{
+
+                  })
+               }
+               // console.log('Update dc');
+            }
+              
+                  
+      }).catch( err =>{
+
+      })
+
+
    })
 
    router.post('/updateStatusWorking', async(req,res) =>{
@@ -209,7 +242,7 @@ const { default: Axios } = require('axios');
     }
 
    async function sendPushNotification(expoPushToken,i,date) {
-      var text = 'Việc của bạn đã được xác nhận'
+      var text = 'Việc của bạn đã được xác nhận. Giờ bạn có thể trò chuyện với nhân viên'
       const message = {
         to: expoPushToken,
         sound: 'default',

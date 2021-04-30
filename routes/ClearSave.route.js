@@ -3,10 +3,11 @@ var router = express.Router()
 var Clear = require('../model/clear.model')
 var ClearSave = require('../model/clearsave.model')
 var Staff = require('../model/staff.model')
+var Chat = require('../model/chat.model')
 
    router.post('/create', async(req,res)=>{
       // console.log(req.body);
-      const work = req.body.work
+      // const work = req.body.work
 
       const dataClear =  await Clear.findOne({ _id: work._id })
       dataClear.idStaff.map(valueID =>{
@@ -63,6 +64,11 @@ var Staff = require('../model/staff.model')
             
          }).catch(err=>{
 
+         })
+         Chat.deleteOne({idRoom: work._id}).then(result =>{
+            console.log('Chat clear deleted');
+         }).catch(err =>{
+            console.log('Delete Clear Chat Failed');
          })
          res.status(200).send({status: "Successfull!"})
       }).catch(err =>{

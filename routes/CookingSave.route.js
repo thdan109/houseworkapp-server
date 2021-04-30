@@ -40,35 +40,40 @@ var Staff = require('../model/staff.model')
 
 
 
-      // await CookingSave.create({
-      //    idWork: work._id,
-      //    idUSer: work.idUser,
-      //    fullname: work.fullname,
-      //    address: work.address,
-      //    date: work.date,
-      //    dishList: work.dishList,
-      //    goMarket:work.goMarket,
-      //    fruit: work.fruit,
-      //    timeStart: work.timeStart,
-      //    idStaff: work.idStaff,
-      //    money: work.money
-      // }).then(result =>{
-      //    Cooking.findOne({_id: work.id}).then(result =>{
-      //       const condition ={ _id: work._id}
-      //       const process = { status: "Đã thanh toán"}
-      //       Cooking.updateOne(condition, process).then(()=>{
-      //          // res.status(200).send({})
-      //       })
-      //       Cooking.deleteOne({_id: work._id}).then(result =>{
+      await CookingSave.create({
+         idWork: work._id,
+         idUSer: work.idUser,
+         fullname: work.fullname,
+         address: work.address,
+         date: work.date,
+         dishList: work.dishList,
+         goMarket:work.goMarket,
+         fruit: work.fruit,
+         timeStart: work.timeStart,
+         idStaff: work.idStaff,
+         money: work.money
+      }).then(result =>{
+         Cooking.findOne({_id: work.id}).then(result =>{
+            const condition ={ _id: work._id}
+            const process = { status: "Đã thanh toán"}
+            Cooking.updateOne(condition, process).then(()=>{
+               // res.status(200).send({})
+            })
+            Cooking.deleteOne({_id: work._id}).then(result =>{
 
-      //       }).catch(err =>{
+            }).catch(err =>{
                
-      //       })
-      //       res.status(200).send({status: "Successfull!"})
-      //    }).catch(err=>{
-      //       console.log(err)
-      //    })
-      // })
+            })
+            Chat.deleteOne({idRoom: work._id}).then(result =>{
+               console.log('Chat cooking deleted');
+            }).catch(err =>{
+               console.log('Delete cooking Chat Failed');
+            })
+            res.status(200).send({status: "Successfull!"})
+         }).catch(err=>{
+            console.log(err)
+         })
+      })
    })
 
    router.get('/dataSaveCooking', async(req, res) =>{

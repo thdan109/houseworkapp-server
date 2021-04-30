@@ -57,6 +57,11 @@ var Staff = require('../model/staff.model')
          Washing.deleteOne({_id: work._id}).then(result =>{
             
          })
+         Chat.deleteOne({idRoom: work._id}).then(result =>{
+            console.log('Chat wash deleted');
+         }).catch(err =>{
+            console.log('Delete wash Chat Failed');
+         })
          res.status(200).send({status: "Successfull!"})
       }).catch(err =>{
          console.log(err);

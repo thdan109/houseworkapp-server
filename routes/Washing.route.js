@@ -142,6 +142,36 @@ var User = require('../model/customer.model')
             
          })
       })
+
+      const idWashChat = req.body.data[5].id;
+      const idUserChat = req.body.data[4].idUser;
+      await Chat.findOne({idRoom: idWashChat}).then( result =>{
+         if (result === null) {
+            Chat.create({
+               idRoom: idWashChat,
+               idStaff: ids,
+               idUser: idUserChat
+            })
+            console.log('Created!');
+         }else{
+            for (var i in ids){
+               const condition = {idRoom: idWashChat}
+               const process = {
+                  $push:{
+                     idStaff: {$each: [ids[i]]}
+                  }
+               }
+               Chat.updateOne(condition, process).then(()=>{
+
+               })
+            }
+            console.log('Chat already exist! Update Chat');
+         }
+              
+                  
+      }).catch( err =>{
+
+      })
    })
 
    router.post('/updateStatusWorking', async(req,res) =>{
