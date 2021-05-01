@@ -11,8 +11,17 @@ router.post('/add',async(req,res)=>{
    })
    res.status(200).send(createReport)
 
-} )
+})
 
+router.get('/getData', async(req,res) =>{
+   const data = await ReportStaff.find({})
 
+   if ( data){
+      res.status(200).send(data)
+   }else{
+      res.status(200).send({status: 'No'})
+      console.log('Khong co du lieu');
+   }
+})
    
 module.exports = router

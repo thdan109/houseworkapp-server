@@ -28,6 +28,7 @@ var WashingSaveRoute = require('./routes/WashingSave.route')
 var CookingSaveRoute = require('./routes/CookingSave.route')
 var ReportStaffRoute = require('./routes/ReportStaff.route')
 var FeedBackRoute = require('./routes/FeedBack.route')
+var SalaryRoute = require('./routes/Salary.route')
 app.use(cors())
 
 // view engine setup
@@ -58,7 +59,7 @@ app.use('/washingsave', WashingSaveRoute)
 app.use('/cookingsave', CookingSaveRoute)
 app.use('/reportstaff', ReportStaffRoute)
 app.use('/feedback', FeedBackRoute)
-
+app.use('/salary', SalaryRoute)
 
 
 

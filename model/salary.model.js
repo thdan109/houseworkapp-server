@@ -4,6 +4,7 @@ var SalarySchema = new mongoose.Schema({
    "idStaff" : String,
    "nameStaff": String,
    "department": String,
+   "date":Date,
    "work": Number, 
    "salary": Number,
 })
