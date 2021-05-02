@@ -21,6 +21,7 @@ var StaffSchema = new mongoose.Schema({
    "birthPlace": String,
    "joinDay": Date,
    "idWork": [],
+   "absent": Number,
    "time": [String],
    "datework": [String],
    "numberWorkMonth":Number,

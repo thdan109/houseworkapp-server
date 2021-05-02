@@ -2,6 +2,7 @@ var express = require('express')
 
 var router = express.Router()
 var Leave = require('../model/leave.model')
+var Staff = require('../model/staff.model')
 
 router.post('/leaveOfStaffById', async(req,res) =>{
    const reason =  await Leave.find({idStaff: req.body.id })
@@ -17,8 +18,21 @@ router.post('/create', async(req, res )=>{
       department: req.body.department,
       date: req.body.date,
       reason: req.body.reason
+   }).then(result =>{
+      res.status(200).send({status: 'Successfully!'})
+   }).catch(err =>{
+      console.log(err);
    })
-   res.status(200).send({status: 'Successfully!'})
+   
+   await Staff.findOne({_id: req.body.id}).then(result =>{
+      const condition ={ _id: req.body.id}
+      const process ={ $inc:  { absent: 1 }}
+      Staff.updateOne(condition, process).then(()=>{
+         res.status(200).send({status: 'Oke'})
+      })
+   })
+
+
 })
 
 

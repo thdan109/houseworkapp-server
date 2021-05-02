@@ -79,6 +79,14 @@ const { default: Axios } = require('axios');
       }) 
    })
 
+   router.post('/cancelWork', async(req,res) =>{
+      await Clear.deleteOne({_id: req.body.id}).then( result =>{
+         res.status(200).send({delete: 'Oke'})
+      }).catch(err =>{
+         res.status(200).send({delete: 'No'})
+      })
+   })
+
    router.post('/workStaffById',async(req,res) =>{
       const workById = await Clear.findOne({ idStaff: req.body.idStaff, _id: req.body.idWork })
       res.status(200).send(workById)

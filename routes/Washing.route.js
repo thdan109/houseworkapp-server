@@ -41,6 +41,14 @@ var User = require('../model/customer.model')
       }) 
    })
 
+   router.post('/cancelWork', async(req,res) =>{
+      await Washing.deleteOne({_id: req.body.id}).then( result =>{
+         res.status(200).send({delete: 'Oke'})
+      }).catch(err =>{
+         res.status(200).send({delete: 'No'})
+      })
+   })
+
    router.post('/workStaff', async(req, res) =>{
       const work =  await Washing.find({idStaff: req.body.id, dateSend: req.body.nowDate })
       if (!work){

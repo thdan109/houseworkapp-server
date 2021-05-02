@@ -89,7 +89,9 @@ router.post('/addStaff',uploadStaff.single('files'),async(req,res)=>{
          sex: req.body.genderStaff,
          birthPlace: req.body.birthPlace,
          joinDay: joinDay,
-         department: req.body.department
+         department: req.body.department,
+         absent: 0,
+         numWorkMonth: 0
       })
       // console.log(staff);
       await staff.save()

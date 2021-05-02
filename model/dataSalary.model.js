@@ -1,6 +1,6 @@
 var mongoose = require('mongoose')
 var DataSalarySchema = new mongoose.Schema({
-   "targets": Number,
+   "target": Number,
    "work": Number,
    "bonus": Number,
    "absent": Number,

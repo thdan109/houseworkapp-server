@@ -70,6 +70,14 @@ const { default: Axios } = require('axios');
       }) 
    })
 
+   router.post('/cancelWork', async(req,res) =>{
+      await Cooking.deleteOne({_id: req.body.id}).then( result =>{
+         res.status(200).send({delete: 'Oke'})
+      }).catch(err =>{
+         res.status(200).send({delete: 'No'})
+      })
+   })
+
    router.post('/addStaff', async(req,res) =>{
       // console.log(req.body.data);
       const t = req.body.dataStaff;
