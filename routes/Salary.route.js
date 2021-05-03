@@ -67,8 +67,6 @@ router.post('/countSalary', async(req, res) =>{
       const dateprocessed  = (new Intl.DateTimeFormat('en-US').format(date));
       
       const  totalSalary = work*numWorkMonth_val + bonus*(numWorkMonth_val-target) - absent*absent_val
-      //    console.log(dateprocessed, idStaff,nameStaff,department , totalSalary);
-      
       Salary.create({
          idStaff: idStaff,
          nameStaff: nameStaff,
@@ -82,10 +80,16 @@ router.post('/countSalary', async(req, res) =>{
       }).catch(err=>{
          res.status(200).send({status: 'No'})
       })
-         
       
+      const condition = {_id: data._id }
+      const process = {
+         absent: 0,
+         numberWorkMonth: 9
+      }
 
-      
+      Staff.updateOne( condition, process ).then(()=>{
+         // res.status(200).send({status: 'Oke'})
+      })
 
    })
 

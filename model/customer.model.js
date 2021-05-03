@@ -2,7 +2,7 @@ var validator = require('express-validator');
 var bcrypt  = require('bcrypt');
 var jwt = require('jsonwebtoken');
 var JWT_KEY = process.env.JWT_KEY;
-
+var Chat = require('./chat.model')
 
 var mongoose = require('mongoose');
 var userSchema = new mongoose.Schema({

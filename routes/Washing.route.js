@@ -3,6 +3,7 @@ var router = express.Router()
 var Washing = require('../model/washing.model')
 var Staff = require('../model/staff.model')
 const { default: Axios } = require('axios');
+var Chat = require('../model/chat.model')
 var User = require('../model/customer.model')
    router.get('/getData', async(req,res)=>{
       const dataWashing = await Washing.find({})
@@ -103,6 +104,8 @@ var User = require('../model/customer.model')
 
          const user = await User.findOne({ _id: idUser})
          const dataWashing = await Washing.findOne({ _id: idWash})
+         
+      
 
          for (var i of getStaff.tokens ){
             sendPushNotificationStaff( i.tokenDevices, dataWashing.timeSend,dataWashing.dateSend.toDateString() )
@@ -153,12 +156,15 @@ var User = require('../model/customer.model')
 
       const idWashChat = req.body.data[5].id;
       const idUserChat = req.body.data[4].idUser;
+      const userChat = await User.findOne({_id: idUserChat}) 
+      const nameUserChat = userChat.fullname
       await Chat.findOne({idRoom: idWashChat}).then( result =>{
          if (result === null) {
             Chat.create({
                idRoom: idWashChat,
                idStaff: ids,
-               idUser: idUserChat
+               idUser: idUserChat,
+               nameUser: nameUserChat
             })
             console.log('Created!');
          }else{

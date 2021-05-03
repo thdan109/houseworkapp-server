@@ -5,6 +5,7 @@ var Cooking = require('../model/cooking.model')
 var Staff = require('../model/staff.model')
 var User = require('../model/customer.model')
 var Service = require('../model/service.model')
+var Chat = require('../model/chat.model')
 const { default: Axios } = require('axios');
 
    router.get('/dataCooking',async(req,res)=>{
@@ -146,12 +147,19 @@ const { default: Axios } = require('axios');
 
          const idCookingChat = req.body.data[3].id;
          const idUserChat = req.body.data[2].idUser;
+         const userChat = await User.findOne({_id: idUserChat}) 
+         const nameUserChat = userChat.fullname
          await Chat.findOne({idRoom: idCookingChat}).then( result =>{
                if (result === null) {
                   Chat.create({
                      idRoom: idCookingChat,
                      idStaff: ids,
-                     idUser: idUserChat
+                     idUser: idUserChat,
+                     nameUser: nameUserChat
+                  }).then(result =>{
+                     res.status(200)
+                  }).catch(err =>{
+                  
                   })
                   console.log('Tao xong roi');
                }else{
@@ -178,8 +186,8 @@ const { default: Axios } = require('axios');
          const condition = { _id: req.body.data[3].id }
          const process = { status: status }
          Cooking.updateOne(condition, process).then(()=>{
-
-         })
+            res.status(200).send({status: 'Oke'})
+         }) 
       })
 
    })

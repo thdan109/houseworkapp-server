@@ -30,6 +30,7 @@ const { default: Axios } = require('axios');
 
    router.post('/create', async(req,res)=>{
       const firstStatus = "Đang chờ xác nhận"
+      // const dateprocessed  = (new Intl.DateTimeFormat('en-US').format(req.body.date))
       // console.log(req.body);
       // console.log(req.body.time);
       await Clear.create({
@@ -106,7 +107,14 @@ const { default: Axios } = require('axios');
             }
             }
       }
-      console.log(ids);
+      // console.log(ids);
+      const idClearTB = req.body.data[2].id;
+      const idUserTB = req.body.data[3].idUser;
+      const userTB = await User.findOne({_id: idUserTB})
+      const dataclearTB = await Clear.findOne({ _id: idClearTB })
+      for ( var i of userTB.tokens){
+         sendPushNotification(i.tokenDevices,dataclearTB.date.toDateString())
+      }
       for ( var i in ids){
          const time= req.body.data[0].time;
          const date = req.body.data[1].date
@@ -121,10 +129,11 @@ const { default: Axios } = require('axios');
             sendPushNotificationStaff( i.tokenDevices, dataclear.timeStart,dataclear.date.toDateString() )
          }
 
-         for ( var i of user.tokens){
-            sendPushNotification(i.tokenDevices, status,dataclear.date.toDateString())
-         }
+         // for ( var i of user.tokens){
+         //    sendPushNotification(i.tokenDevices,dataclear.date.toDateString())
+         // }
          const nameStaff = getStaff.fullnameStaff
+         
          
          await Clear.findOne({_id: idClear}).then(data =>{
             const condition = {_id: idClear}
@@ -140,7 +149,6 @@ const { default: Axios } = require('axios');
          })
          await Staff.findOne({ _id: idStaff }).then(data =>{
             const condition = { _id: idStaff }
-          
             const process = { 
                $push:
                {
@@ -165,14 +173,21 @@ const { default: Axios } = require('axios');
       })
       const idClearChat = req.body.data[2].id;
       const idUserChat = req.body.data[3].idUser;
+      const userChat = await User.findOne({_id: idUserChat}) 
+      const nameUserChat = userChat.fullname
       await Chat.findOne({idRoom: idClearChat}).then( result =>{
             if (result === null) {
                Chat.create({
                   idRoom: idClearChat,
                   idStaff: ids,
-                  idUser: idUserChat
+                  idUser: idUserChat,
+                  nameUser: nameUserChat
+               }).then(res =>{
+                  res.status(200)
+               }).catch(err=>{
+
                })
-               // console.log('Tao xong roi');
+               console.log('Tao xong roi');
             }else{
                for (var i in ids){
                   const condition = {idRoom: idClearChat}
@@ -182,13 +197,11 @@ const { default: Axios } = require('axios');
                      }
                   }
                   Chat.updateOne(condition, process).then(()=>{
-
+                     res.status(200).send({status: 'Oke'})
                   })
                }
-               // console.log('Update dc');
+               console.log('Update dc');
             }
-              
-                  
       }).catch( err =>{
 
       })
@@ -249,7 +262,7 @@ const { default: Axios } = require('axios');
       });
     }
 
-   async function sendPushNotification(expoPushToken,i,date) {
+   async function sendPushNotification(expoPushToken,date) {
       var text = 'Việc của bạn đã được xác nhận. Giờ bạn có thể trò chuyện với nhân viên'
       const message = {
         to: expoPushToken,

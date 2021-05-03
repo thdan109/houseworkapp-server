@@ -29,6 +29,7 @@ var CookingSaveRoute = require('./routes/CookingSave.route')
 var ReportStaffRoute = require('./routes/ReportStaff.route')
 var FeedBackRoute = require('./routes/FeedBack.route')
 var SalaryRoute = require('./routes/Salary.route')
+var ChatRoute = require('./routes/Chat.route')
 app.use(cors())
 
 // view engine setup
@@ -60,6 +61,7 @@ app.use('/cookingsave', CookingSaveRoute)
 app.use('/reportstaff', ReportStaffRoute)
 app.use('/feedback', FeedBackRoute)
 app.use('/salary', SalaryRoute)
+app.use('/chat', ChatRoute)
 
 
 
