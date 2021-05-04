@@ -29,6 +29,56 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+// Start SocketIo
+
+const socketio = require('socket.io')
+const io = socketio(server, {
+    cors:true,
+    // origins:["http://127.0.0.1:3000"],
+})
+
+const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
+// const Chat = require("../model/chat.model")
+io.on('connection', (socket) => {
+
+    socket.on('join', ({ name, room }, callback) => {
+         console.log('User had joined');   
+         const { error, user } = addUser({ id: socket.id, name, room })
+
+         if(error) return callback(error);
+   
+         socket.join(user.room)
+    })
+
+    socket.on('sendMessage', (message, callback) => {
+        const user = getUser(socket.id)
+
+        io.to(user.room).emit('message', { user: user.name, data: message })
+ 
+      //   Chat.findOne({ room: user.room })
+      //   .then(data => {
+      //       const { messages } = data;
+      //       messages.unshift(message[0]);
+      //       const newMessages = messages
+      //       const condition = {room: user.room}
+      //       const handler = { messages: newMessages }
+      //       Chat.updateOne(condition, handler)
+      //       .then(() => {})
+      //   })
+    })
+
+    socket.on('disconnect', () => {
+        console.log('User had left !!');
+    })
+})
+
+// End SocketIo
+
+
+
+
+
+
 /**
  * Normalize a port into a number, string, or false.
  */
@@ -88,3 +138,7 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+
+
+

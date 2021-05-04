@@ -7,6 +7,10 @@ var app = express();
 var cors = require('cors');
 var dotenv = require('dotenv').config()
 
+
+
+
+
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/DB')
 .then(()=> console.log("Connnectttt")) 
