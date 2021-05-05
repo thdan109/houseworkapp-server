@@ -38,23 +38,22 @@ const io = socketio(server, {
 })
 
 const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
-// const Chat = require("../model/chat.model")
+const Chat = require("../model/chat.model")
 io.on('connection', (socket) => {
 
-    socket.on('join', ({ name, room }, callback) => {
-         console.log('User had joined');   
-         const { error, user } = addUser({ id: socket.id, name, room })
+   socket.on('join', ({ name, room }, callback) => {
+      console.log('User had joined'); 
+      
+      const { error, user } = addUser({ id: socket.id, name, room })
 
-         if(error) return callback(error);
-   
-         socket.join(user.room)
-    })
+      if(error) return callback(error);
+
+      socket.join(user.room)
+   })
 
     socket.on('sendMessage', (message, callback) => {
-        const user = getUser(socket.id)
-
-        io.to(user.room).emit('message', { user: user.name, data: message })
- 
+      const user = getUser(socket.id)
+      io.to(user.room).emit('message', { user: user.name, data: message })
       //   Chat.findOne({ room: user.room })
       //   .then(data => {
       //       const { messages } = data;
@@ -65,11 +64,22 @@ io.on('connection', (socket) => {
       //       Chat.updateOne(condition, handler)
       //       .then(() => {})
       //   })
+      
+         Chat.findOne({ _id: user.room }).then( data =>{
+            const { messages } = data
+            messages.unshift(message[0])
+            const updateMessages = messages
+            const condition = {_id:  user.room}
+            const process = {messages: updateMessages }
+            Chat.updateOne( condition, process ).then(()=>{
+
+            })
+         })
     })
 
-    socket.on('disconnect', () => {
-        console.log('User had left !!');
-    })
+   socket.on('disconnect', () => {
+      console.log('User had left !!');
+   })
 })
 
 // End SocketIo

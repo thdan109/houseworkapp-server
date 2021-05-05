@@ -39,6 +39,16 @@ var User = require('../model/customer.model')
       }
    })
 
+   router.post('/oldMessages', async(req, res) =>{
+      const id = req.body.idRoom
+      const data = await Chat.findOne({_id: id})
+      if (data){
+         res.status(200).send(data)
+      }else{
+         console.log('error!');
+      }
+   })
+
 
 
 module.exports = router

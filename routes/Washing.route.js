@@ -156,6 +156,8 @@ var User = require('../model/customer.model')
 
       const idWashChat = req.body.data[5].id;
       const idUserChat = req.body.data[4].idUser;
+      const dateChat = req.body.data[2].dateSend
+      const type= "Giặt ủi"
       const userChat = await User.findOne({_id: idUserChat}) 
       const nameUserChat = userChat.fullname
       await Chat.findOne({idRoom: idWashChat}).then( result =>{
@@ -164,7 +166,9 @@ var User = require('../model/customer.model')
                idRoom: idWashChat,
                idStaff: ids,
                idUser: idUserChat,
-               nameUser: nameUserChat
+               nameUser: nameUserChat,
+               date: dateChat,
+               type: type
             })
             console.log('Created!');
          }else{

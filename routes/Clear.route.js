@@ -174,14 +174,18 @@ const { default: Axios } = require('axios');
       const idClearChat = req.body.data[2].id;
       const idUserChat = req.body.data[3].idUser;
       const userChat = await User.findOne({_id: idUserChat}) 
+      const dateChat = req.body.data[1].date
       const nameUserChat = userChat.fullname
+      const type = "Dọn nhà"
       await Chat.findOne({idRoom: idClearChat}).then( result =>{
             if (result === null) {
                Chat.create({
                   idRoom: idClearChat,
                   idStaff: ids,
                   idUser: idUserChat,
-                  nameUser: nameUserChat
+                  nameUser: nameUserChat,
+                  date: dateChat,
+                  type: type
                }).then(res =>{
                   res.status(200)
                }).catch(err=>{

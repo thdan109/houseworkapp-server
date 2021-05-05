@@ -6,7 +6,9 @@ var chatSchema = new mongoose.Schema({
    "idStaff": [{type:  mongoose.Schema.Types.ObjectId, ref: 'Staff'}],
    "idUser": {type:  mongoose.Schema.Types.ObjectId, ref: 'User'},
    "nameUser":String,
-   "messages": []
+   "messages": [],
+   "date":Date,
+   "type": String
 })
 
 var Chat = mongoose.model('Chat', chatSchema, 'chat')
