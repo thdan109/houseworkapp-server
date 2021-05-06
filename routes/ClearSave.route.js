@@ -7,7 +7,7 @@ var Chat = require('../model/chat.model')
 
    router.post('/create', async(req,res)=>{
       // console.log(req.body);
-      // const work = req.body.work
+      const work = req.body.work
 
       const dataClear =  await Clear.findOne({ _id: work._id })
       dataClear.idStaff.map(valueID =>{

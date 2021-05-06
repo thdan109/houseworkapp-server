@@ -34,6 +34,7 @@ var ReportStaffRoute = require('./routes/ReportStaff.route')
 var FeedBackRoute = require('./routes/FeedBack.route')
 var SalaryRoute = require('./routes/Salary.route')
 var ChatRoute = require('./routes/Chat.route')
+var NotificationRoute = require('./routes/Notification.route')
 app.use(cors())
 
 // view engine setup
@@ -66,6 +67,7 @@ app.use('/reportstaff', ReportStaffRoute)
 app.use('/feedback', FeedBackRoute)
 app.use('/salary', SalaryRoute)
 app.use('/chat', ChatRoute)
+app.use('/notifi', NotificationRoute)
 
 
 

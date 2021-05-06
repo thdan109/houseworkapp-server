@@ -6,6 +6,8 @@ var Staff = require('../model/staff.model')
 var User = require('../model/customer.model')
 var Service = require('../model/service.model')
 var Chat = require('../model/chat.model')
+var Notification = require('../model/notification.model')
+var NotificationStaff = require('../model/notificationstaff.model')
 const { default: Axios } = require('axios');
 
    router.get('/dataCooking',async(req,res)=>{
@@ -93,6 +95,38 @@ const { default: Axios } = require('axios');
             }
             }
       }
+
+
+      const idCookingTB = req.body.data[3].id;
+      const idUserTB = req.body.data[2].idUser;
+      const userTB = await User.findOne({_id: idUserTB})
+      const dataCookingTB = await Cooking.findOne({ _id: idCookingTB })
+      for ( var i of userTB.tokens){
+         sendPushNotification(i.tokenDevices,status,dataCookingTB.date.toDateString())
+      }
+      var text = 'Việc của bạn đã được xếp nhân viên. Giờ bạn có thể trò chuyện với nhân viên'            
+      var typeNotifi = 'Nấu ăn'
+
+      await Notification.findOne({$and: [{idUser: idUserTB}, {date: dataCookingTB.date}]}).then( result =>{
+         if (result === null){
+            Notification.create({
+               idUser: idUserTB,
+               date: dataCookingTB.date,
+               content: text,
+               type: typeNotifi
+            })
+         }
+      })
+
+      await Cooking.findOne({_id: req.body.data[3].id}).then(data =>{
+         const condition = { _id: req.body.data[3].id }
+         const process = { status: status }
+         Cooking.updateOne(condition, process).then(()=>{
+            res.status(200).send({status: 'Oke'})
+         }) 
+      })
+
+
       for ( var i in ids){
          // console.log(ids[i]);
          const time= req.body.data[0].time;
@@ -110,9 +144,22 @@ const { default: Axios } = require('axios');
             sendPushNotificationStaff( i.tokenDevices, dataCooking.timeStart,dataCooking.date.toDateString() )
          }
 
-         for ( var i of user.tokens){
-            sendPushNotification(i.tokenDevices, status,dataCooking.date.toDateString())
-         }
+         var textNotifi = dataCooking.timeStart +' '+dataCooking.date.toDateString()
+
+         await NotificationStaff.findOne({$and: [{idStaff: idStaff}, {date: dataCooking.date}]}).then( result =>{
+            if (result === null){
+               NotificationStaff.create({
+                  idStaff: idStaff,
+                  date: dataCooking.date,
+                  content: textNotifi,
+                  type: typeNotifi
+               })
+            }
+         })
+
+         // for ( var i of user.tokens){
+         //    sendPushNotification(i.tokenDevices, status,dataCooking.date.toDateString())
+         // }
 
          // console.log(nameStaff);
          await Cooking.findOne({_id: idCooking}).then(data =>{
@@ -186,13 +233,7 @@ const { default: Axios } = require('axios');
 
          })
       }
-      await Cooking.findOne({_id: req.body.data[3].id}).then(data =>{
-         const condition = { _id: req.body.data[3].id }
-         const process = { status: status }
-         Cooking.updateOne(condition, process).then(()=>{
-            res.status(200).send({status: 'Oke'})
-         }) 
-      })
+      
 
    })
    router.post('/updateStatusWorking', async(req,res) =>{
@@ -270,10 +311,14 @@ const { default: Axios } = require('axios');
           'Content-Type': 'application/json',
         },
        
+      }).then(()=>{
+
+      } ).catch(()=>{
+         
       });
     }
    async function sendPushNotification(expoPushToken,i,date) {
-      var text = 'Việc của bạn đã được xác nhận'
+      var text = 'Việc của bạn đã được xếp nhân viên. Giờ bạn có thể trò chuyện với nhân viên'
     
       const message = {
         to: expoPushToken,
@@ -289,6 +334,10 @@ const { default: Axios } = require('axios');
           'Content-Type': 'application/json',
         },
        
+      }).then(()=>{
+
+      } ).catch(()=>{
+         
       });
     }
 

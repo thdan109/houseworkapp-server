@@ -5,6 +5,10 @@ var Staff = require('../model/staff.model')
 const { default: Axios } = require('axios');
 var Chat = require('../model/chat.model')
 var User = require('../model/customer.model')
+var Notification = require('../model/notification.model')
+var NotificationStaff = require('../model/notificationstaff.model')
+
+
    router.get('/getData', async(req,res)=>{
       const dataWashing = await Washing.find({})
       res.status(200).send((dataWashing)) 
@@ -90,7 +94,37 @@ var User = require('../model/customer.model')
             }
             }
       }
-     for ( var i in ids){
+
+      await Washing.findOne({ _id: req.body.data[4].id}).then(data=>{
+         const condition = { _id: req.body.data[4].id }
+         const process = { status : status  }
+         Washing.updateOne(condition,process).then(()=>{
+            
+         })
+      })
+
+      const idWashTB = req.body.data[5].id;
+      const idUserTB = req.body.data[4].idUser;
+      const userTB = await User.findOne({_id: idUserTB})
+      const dataWashTB = await Washing.findOne({ _id: idWashTB })
+      for ( var i of userTB.tokens){
+         sendPushNotification(i.tokenDevices, status,dataWashTB.dateSend.toDateString())
+      }
+      var text = 'Việc của bạn đã được xếp nhân viên. Giờ bạn có thể trò chuyện với nhân viên'            
+      var typeNotifi = 'Dọn dẹp nhà'
+
+      await Notification.findOne({$and: [{idUser: idUserTB}, {date: dataWashTB.date}]}).then( result =>{
+         if (result === null){
+            Notification.create({
+               idUser: idUserTB,
+               date: dataWashTB.date,
+               content: text,
+               type: typeNotifi
+            })
+         }
+      }) 
+
+      for ( var i in ids){
          // console.log(ids[i]);
          const idStaff = ids[i]
          const timeSend = req.body.data[0].timeSend
@@ -111,9 +145,21 @@ var User = require('../model/customer.model')
             sendPushNotificationStaff( i.tokenDevices, dataWashing.timeSend,dataWashing.dateSend.toDateString() )
          }
 
-         for ( var i of user.tokens){
-            sendPushNotification(i.tokenDevices, status,dataWashing.date.toDateString())
-         }
+         var textNotifi = dataWashing.timeSend +' '+dataWashing.dateSend.toDateString()
+         
+         await NotificationStaff.findOne({$and: [{idStaff: idStaff}, {date: dataWashing.date}]}).then( result =>{
+            if (result === null){
+               NotificationStaff.create({
+                  idStaff: idStaff,
+                  date: dataWashing.date,
+                  content: textNotifi,
+                  type: typeNotifi
+               })
+            }
+         })
+         // for ( var i of user.tokens){
+         //    sendPushNotification(i.tokenDevices, status,dataWashing.date.toDateString())
+         // }
 
          await Washing.findOne({ _id: idWash }).then(data =>{
             const condition = { _id: idWash }
@@ -146,13 +192,7 @@ var User = require('../model/customer.model')
          })
       }
 
-      await Washing.findOne({ _id: req.body.data[4].id}).then(data=>{
-         const condition = { _id: req.body.data[4].id }
-         const process = { status : status  }
-         Washing.updateOne(condition,process).then(()=>{
-            
-         })
-      })
+      
 
       const idWashChat = req.body.data[5].id;
       const idUserChat = req.body.data[4].idUser;
@@ -246,6 +286,10 @@ var User = require('../model/customer.model')
           'Content-Type': 'application/json',
         },
        
+      }).then(()=>{
+
+      } ).catch(()=>{
+         
       });
     }
    async function sendPushNotification(expoPushToken,i,date) {
@@ -265,6 +309,10 @@ var User = require('../model/customer.model')
           'Content-Type': 'application/json',
         },
        
+      }).then(()=>{
+
+      } ).catch(()=>{
+         
       });
     }
 module.exports = router

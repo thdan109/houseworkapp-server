@@ -5,6 +5,9 @@ const User = require('../model/customer.model')
 var Staff = require('../model/staff.model')
 var Service = require('../model/service.model')
 var Chat = require('../model/chat.model')
+var Notification = require('../model/notification.model')
+var NotificationStaff = require('../model/notificationstaff.model')
+
 const { default: Axios } = require('axios');
 
    router.get('/getData', async(req,res) =>{
@@ -115,6 +118,28 @@ const { default: Axios } = require('axios');
       for ( var i of userTB.tokens){
          sendPushNotification(i.tokenDevices,dataclearTB.date.toDateString())
       }
+
+      var text = 'Việc của bạn đã được xếp nhân viên. Giờ bạn có thể trò chuyện với nhân viên'            
+      var typeNotifi = 'Dọn dẹp nhà'
+
+      await Notification.findOne({$and: [{idUser: idUserTB}, {date: dataclearTB.date}]}).then( result =>{
+         if (result === null){
+            Notification.create({
+               idUser: idUserTB,
+               date: dataclearTB.date,
+               content: text,
+               type: typeNotifi
+            })
+         }
+      }) 
+
+      await Clear.findOne({ _id :  req.body.data[2].id }).then( data =>{
+         const condition = { _id: req.body.data[2].id }
+         const process = { status: status }
+          Clear.updateOne(condition, process).then(()=>{
+         })
+      })
+
       for ( var i in ids){
          const time= req.body.data[0].time;
          const date = req.body.data[1].date
@@ -123,11 +148,27 @@ const { default: Axios } = require('axios');
          const idUser = req.body.data[3].idUser;
          const getStaff =  await Staff.findOne({_id: idStaff})
          
-         const user = await User.findOne({_id: idUser})
+         // const user = await User.findOne({_id: idUser})
          const dataclear = await Clear.findOne({ _id: idClear })
+
+         var textNotifi = dataclear.timeStart +' '+dataclear.date.toDateString()
+
          for (var i of getStaff.tokens ){
             sendPushNotificationStaff( i.tokenDevices, dataclear.timeStart,dataclear.date.toDateString() )
          }
+
+         await NotificationStaff.findOne({$and: [{idStaff: idStaff}, {date: dataclear.date}]}).then( result =>{
+            if (result === null){
+               NotificationStaff.create({
+                  idStaff: idStaff,
+                  date: dataclear.date,
+                  content: textNotifi,
+                  type: typeNotifi
+               })
+            }
+         })
+
+         
 
          // for ( var i of user.tokens){
          //    sendPushNotification(i.tokenDevices,dataclear.date.toDateString())
@@ -135,7 +176,7 @@ const { default: Axios } = require('axios');
          const nameStaff = getStaff.fullnameStaff
          
          
-         await Clear.findOne({_id: idClear}).then(data =>{
+         await Clear.findOne({_id: idClear}).then( data =>{
             const condition = {_id: idClear}
             const process = {
                $push:
@@ -144,10 +185,10 @@ const { default: Axios } = require('axios');
                   nameStaff:   {$each: [nameStaff]}
                }
             }
-            Clear.updateOne(condition, process).then(()=>{
+             Clear.updateOne(condition, process).then(()=>{
             })
          })
-         await Staff.findOne({ _id: idStaff }).then(data =>{
+         await Staff.findOne({ _id: idStaff }).then( data =>{
             const condition = { _id: idStaff }
             const process = { 
                $push:
@@ -155,41 +196,35 @@ const { default: Axios } = require('axios');
                   idWork: {$each: [idClear]},
                   time: {$each: [time]},
                   datework: {$each: [date]}
-               }
+               },
+               $inc:  { numberWorkMonth: 1 }
             }
-            Staff.updateOne( condition, process ).then(()=>{
+             Staff.updateOne( condition, process ).then(()=>{
+            //    const process1 ={ $inc:  { numberWorkMonth: 1 }}
+            //    Staff.updateOne( condition, process1).then(()=>{
+  
+            //   })
             })
-            const process1 ={ $inc:  { numberWorkMonth: 1 }}
-            Staff.updateOne( condition, process1).then(()=>{
-
-            })
+           
          })
+       
       }
-      await Clear.findOne({ _id :  req.body.data[2].id }).then(data =>{
-         const condition = { _id: req.body.data[2].id }
-         const process = { status: status }
-         Clear.updateOne(condition, process).then(()=>{
-         })
-      })
+      
       const idClearChat = req.body.data[2].id;
       const idUserChat = req.body.data[3].idUser;
       const userChat = await User.findOne({_id: idUserChat}) 
       const dateChat = req.body.data[1].date
       const nameUserChat = userChat.fullname
       const type = "Dọn nhà"
-      await Chat.findOne({idRoom: idClearChat}).then( result =>{
+      await Chat.findOne({idRoom: idClearChat}).then(  result =>{
             if (result === null) {
-               Chat.create({
+                Chat.create({
                   idRoom: idClearChat,
                   idStaff: ids,
                   idUser: idUserChat,
                   nameUser: nameUserChat,
                   date: dateChat,
                   type: type
-               }).then(res =>{
-                  res.status(200)
-               }).catch(err=>{
-
                })
                console.log('Tao xong roi');
             }else{
@@ -209,8 +244,7 @@ const { default: Axios } = require('axios');
       }).catch( err =>{
 
       })
-
-
+      
    })
 
    router.post('/updateStatusWorking', async(req,res) =>{
@@ -263,6 +297,10 @@ const { default: Axios } = require('axios');
           'Content-Type': 'application/json',
         },
        
+      }).then(()=>{
+
+      } ).catch(()=>{
+
       });
     }
 
@@ -282,6 +320,10 @@ const { default: Axios } = require('axios');
           'Content-Type': 'application/json',
         },
        
+      }).then(()=>{
+
+      } ).catch(()=>{
+         
       });
     }
 
