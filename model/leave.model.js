@@ -1,8 +1,9 @@
 var mongoose = require('mongoose')
 var leaveSchema = new mongoose.Schema({
-   "idStaff": String,
+   "idStaff": {type: mongoose.Schema.Types.ObjectId, ref: 'Staff' },
    "nameStaff" : String,
    "department": String,
+   "status":String,
    "date": Date,
    "reason": String
 })

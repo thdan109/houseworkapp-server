@@ -1,5 +1,5 @@
 var mongoose = require('mongoose')
-var NotificationStaffSchema = mongoose.Schema({
+var NotificationStaffSchema = new  mongoose.Schema({
 
    "idStaff": {type:  mongoose.Schema.Types.ObjectId, ref: 'Staff'},
    "date": Date,
