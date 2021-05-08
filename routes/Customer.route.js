@@ -6,6 +6,10 @@ var Cooking = require('../model/cooking.model')
 const multer = require("multer");
 var Clear = require("../model/clear.model")
 var Washing = require('../model/washing.model')
+var ClearSave = require('../model/clearsave.model')
+var CookingSave = require('../model/cookingsave.model')
+var WashingSave = require('../model/washingsave.model')
+
 
 var storage = multer.diskStorage({
    destination: function (req, file, cb) {
@@ -177,6 +181,24 @@ router.post('/imageUser',uploadUser.single('photo'),  async(req, res)=>{
       res.status(200).send({orderCooking, orderClear, orderWashing})
       // console.log(orderWashing);
       // console.log(orderWashing);
+      
+      
+   })
+
+   router.get('/getOrderSave',auth, async(req,res)=>{
+      req.user.tokens = req.user.tokens.filter((token) => {
+         return token.token == req.token
+      })
+      const user = req.user
+      const id = user._id
+      const orderCookingSave = await CookingSave.find({idUser: id})
+      // const newOrder = {...order._doc, Service: 'Cooking'}
+      const orderWashingSave = await WashingSave.find({idUser: id})
+      const orderClearSave = await ClearSave.find({idUser: id})
+      res.status(200).send({orderCookingSave, orderClearSave, orderWashingSave})
+      // console.log(orderWashing);
+      // console.log(orderCooking);
+      // console.log(orderClear);
       
       
    })

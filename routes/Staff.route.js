@@ -4,6 +4,9 @@ const multer = require("multer");
 var authStaff = require("../middleware/authStaff")
 var dataStaff = require('../model/staff.model.js')
 var Schedule = require('../model/schedule.model.js')
+var Leave = require('../model/leave.model')
+
+
 
 var storage = multer.diskStorage({
    destination: function (req, file, cb) {
@@ -45,29 +48,107 @@ router.get('/getStaffByIdLoading', authStaff, async(req,res) =>{
 
 
 router.post('/statusStaff', async(req, res)=>{
+
+
    const condition = "Bộ phận Vệ sinh nhà"
    const time = req.body.dttime[0].time
    const date = req.body.dttime[1].date
-   const dts = await dataStaff.find({ $and: [{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } )
-   res.status(200).send(dts)
+   // const datetest  = '2021-05-13T17:00:00.000Z'
+
+   const dleave = await Leave.find({$and:  [{date: date}, {status: 'Đã duyệt'}] })
+
+   // console.log(dleave);
+   const idLeave = []
+   dleave.map(dt =>{
+       idLeave.push(dt.idStaff)
+   })
+   // console.log(idLeave);
+   // const dts = await dataStaff.find({ $and: [{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } )
+   // res.status(200).send(dts)
+   const dts = []
+   if ( idLeave.length === 0){
+      const dts =  await dataStaff.find({ $and: [{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } )
+      res.status(200).send(dts)
+   }else if (idLeave.length > 0)
+      {for ( var i of idLeave){
+         console.log(i);
+         await dataStaff.findOne({ $and: [{_id: {$ne: i}},{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } ).then(res =>{
+            // console.log(res);
+            dts.push(res)
+      })
+      res.status(200).send(dts)
+   }}
+   
+   // console.log(dts);
+   // res.status(200).send(dts)
+
+
 })
 router.post('/statusStaffCooking', async(req, res)=>{
    const condition = "Bộ phận Nấu ăn"
    const time = req.body.dttime[0].time
    const date = req.body.dttime[1].date
-   const dts = await dataStaff.find({ $and: [{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } )
-   res.status(200).send(dts)
+         // date.setDate(date.setDate()+1)
+
+   const dleave = await Leave.find({$and:  [{date: date}, {status: 'Đã duyệt'}] })
+   const idLeave = []
+   dleave.map(dt =>{
+       idLeave.push(dt.idStaff)
+   })
+   const dts = []
+   if ( idLeave.length === 0){
+      const dts1 = await dataStaff.find({ $and: [{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } )
+      res.status(200).send(dts1)
+   }else if (idLeave.length > 0)
+      {for ( var i of idLeave){
+         console.log(i);
+         await dataStaff.findOne({ $and: [{_id: {$ne: i}}, {department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } )
+         .then(res => {
+          // console.log(res);
+            dts.push(res)
+      })
+      res.status(200).send(dts)
+   }}
+
+   // const dts = await dataStaff.find({ $and: [{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } )
+   // res.status(200).send(dts)
 })
 router.post('/statusStaffWash', async(req, res) =>{
+
    const timeSend = req.body.dttime[0].timeSend
    const timeTake = req.body.dttime[1].timeTake
    const dateSend = req.body.dttime[2].dateSend
+         // dateSend.setDate(dateSend.setDate()+1)
    const dateTake = req.body.dttime[3].dateTake
+         // dateTake.setDate(dateTake.setDate()+1)
    const departmentCondition ="Bộ phận Giặt ủi"
-   const condition = " $and: [ {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{atework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] "
+
+   // Tim trong leave
+   const dleave = await Leave.find({$and:  [{date: dateSend} ,{date: dateTake}, {status: 'Đã duyệt'}] })
+   const idLeave = []
+   dleave.map(dt =>{
+       idLeave.push(dt.idStaff)
+   })
+   const dts = []
+   if ( idLeave.length === 0){
+      const dataTimeWash = await dataStaff.find({ $and: [ {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{datework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] })
+      res.status(200).send(dataTimeWash)
+   }else if (idLeave.length > 0){
+      {for ( var i of idLeave){
+         await dataStaff.findOne({ $and: [{_id: {$ne: i}}, {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{datework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] })
+         .then( res =>{
+            dts.push(res)
+         })
+      }
+      res.status(200).send(dts)
+      }
+   }
+   
+
+   // const condition = " $and: [ {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{datework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] "
    // const dataTimeWash = await dataStaff.find({ time: { $ne: timeSend}, time: {$ne: timeTake},datework : {$ne: dateSend}, datework: { $ne:  dateTake}  })
-   const dataTimeWash = await dataStaff.find({ $and: [ {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{atework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] })
-   res.status(200).send(dataTimeWash)
+   // const dataTimeWash = await dataStaff.find({ $and: [ {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{datework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] })
+   // res.status(200).send(dataTimeWash)
    // console.log(dataTimeWash)
 })
 
