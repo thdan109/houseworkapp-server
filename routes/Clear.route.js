@@ -7,6 +7,7 @@ var Service = require('../model/service.model')
 var Chat = require('../model/chat.model')
 var Notification = require('../model/notification.model')
 var NotificationStaff = require('../model/notificationstaff.model')
+var Voucher = require('../model/voucher.model')
 
 const { default: Axios } = require('axios');
 
@@ -33,9 +34,10 @@ const { default: Axios } = require('axios');
 
    router.post('/create', async(req,res)=>{
       const firstStatus = "Đang chờ xác nhận"
-      // const dateprocessed  = (new Intl.DateTimeFormat('en-US').format(req.body.date))
-      // console.log(req.body);
-      // console.log(req.body.time);
+      const dateprocessed  = (new Intl.DateTimeFormat('en-US').format(req.body.date))
+      console.log(req.body);
+      console.log(req.body.time);
+
       await Clear.create({
          idUser: req.body.userID,
          username: req.body.userName,
@@ -48,6 +50,25 @@ const { default: Axios } = require('axios');
          numRoom: req.body.numberroom,
          money: req.body.money
       })
+
+      const dataVoucher = req.body.voucher
+      if (req.body.km !== 0){
+         const id = dataVoucher.map(dt => dt._id)
+         await Voucher.findOne({_id: id}).then(result =>{
+            const condition = {_id: id}
+            const process ={
+               $push :
+               {
+                  idUser: {$each: [req.body.userID]}
+               }
+            }
+            Voucher.updateOne(condition, process).then(()=>{
+
+            })
+         })
+
+      }
+    
    })
 
    router.post('/workStaff', async(req, res) =>{

@@ -199,8 +199,6 @@ router.post('/imageUser',uploadUser.single('photo'),  async(req, res)=>{
       // console.log(orderWashing);
       // console.log(orderCooking);
       // console.log(orderClear);
-      
-      
    })
 
 module.exports = router;

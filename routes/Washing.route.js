@@ -7,11 +7,24 @@ var Chat = require('../model/chat.model')
 var User = require('../model/customer.model')
 var Notification = require('../model/notification.model')
 var NotificationStaff = require('../model/notificationstaff.model')
-
+var Voucher = require('../model/voucher.model')
+var Service = require('../model/service.model')
 
    router.get('/getData', async(req,res)=>{
       const dataWashing = await Washing.find({})
       res.status(200).send((dataWashing)) 
+   })
+
+
+   router.get('/getDataForApp', async(req, res) =>{
+      const dataForApp = await Service.findOne({type: "washing"})
+      // res.status(200).send(dataForApp)
+
+      // const a = dataForApp.prince.map(dt => dt.split(' : '))
+      // const data = a.map(dt1=>(dt1[1])) 
+      const data = dataForApp.prince
+      res.status(200).send({dataForApp,data})
+      console.log('aaaaa',data);
    })
 
    router.post('/create', async(req,res)=>{
@@ -29,6 +42,25 @@ var NotificationStaff = require('../model/notificationstaff.model')
          note: req.body.note,
          money: req.body.money
       })
+
+
+      const dataVoucher = req.body.voucher
+      if (req.body.km !== 0){
+         const id = dataVoucher.map(dt => dt._id)
+         await Voucher.findOne({_id: id}).then(result =>{
+            const condition = {_id: id}
+            const process ={
+               $push :
+               {
+                  idUser: {$each: [req.body.userID]}
+               }
+            }
+            Voucher.updateOne(condition, process).then(()=>{
+
+            })
+         })
+
+      }
 
    })
 

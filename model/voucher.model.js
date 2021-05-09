@@ -3,7 +3,7 @@ var VoucherSchema = new mongoose.Schema({
    "nameVoucher" : String,
    "codeVoucher": String,
    "prince": String,
-   "idUser": [{type:  mongoose.Schema.Types.ObjectId, ref: 'User'}] 
+   "idUser": [] 
 })
 
 var Voucher = mongoose.model('Voucher', VoucherSchema, 'voucher');

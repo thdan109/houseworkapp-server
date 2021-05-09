@@ -25,9 +25,32 @@ router.post('/addVoucher', async(req, res) =>{
 })
 
 
-router.post('/getVoucherForCustomer', async(req, res ) =>{
+router.post('/getVoucherById', async(req, res ) =>{
+   // console.log(req.body.idUser);
+   const data = await Voucher.find({ idUser : {$ne: req.body.idUser} })
+   res.status(200).send(data)
+   // console.log(data);
 
 })
+router.post('/getVoucherByIdClear', async(req, res ) =>{
+   // console.log(req.body.idUser);
+   const data = await Voucher.find({ idUser : {$ne: req.body.idUser} })
+   res.status(200).send(data)
+   // console.log(data);
 
+})
+router.post('/getVoucherByIdWashing', async(req, res ) =>{
+   // console.log(req.body.idUser);
+   const data = await Voucher.find({ idUser : {$ne: req.body.idUser} })
+   res.status(200).send(data)
+   // console.log(data);
+})
+
+router.post('/getVoucherByIdCooking', async(req, res ) =>{
+   // console.log(req.body.idUser);
+   const data = await Voucher.find({ idUser : {$ne: req.body.idUser} })
+   res.status(200).send(data)
+   // console.log(data);
+})
 
 module.exports = router

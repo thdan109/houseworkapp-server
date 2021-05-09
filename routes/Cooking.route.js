@@ -8,6 +8,7 @@ var Service = require('../model/service.model')
 var Chat = require('../model/chat.model')
 var Notification = require('../model/notification.model')
 var NotificationStaff = require('../model/notificationstaff.model')
+var Voucher = require('../model/voucher.model')
 const { default: Axios } = require('axios');
 
    router.get('/dataCooking',async(req,res)=>{
@@ -57,6 +58,28 @@ const { default: Axios } = require('axios');
       }catch{
         console.log('aaaa');
       }
+
+      const dataVoucher = req.body.voucher
+      if (req.body.km !== 0){
+         const id = dataVoucher.map(dt => dt._id)
+         await Voucher.findOne({_id: id}).then(result =>{
+            const condition = {_id: id}
+            const process ={
+               $push :
+               {
+                  idUser: {$each: [req.body.userID]}
+               }
+            }
+            Voucher.updateOne(condition, process).then(()=>{
+
+            })
+         })
+
+      }
+
+
+
+
    })
 
    router.post('/confirmWork', async(req,res)=>{
