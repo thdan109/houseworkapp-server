@@ -10,7 +10,7 @@ var clearsaveSchema = new moongose.Schema({
    "numRoom": String,
    "timeWork":String,
    "timeStart": String,
-   "money": String
+   "money": Number
 })
 var ClearSave = moongose.model('ClearSave' ,clearsaveSchema, 'clearsave')
 module.exports = ClearSave

@@ -80,5 +80,34 @@ var Chat = require('../model/chat.model')
       const dataSaveClear = await ClearSave.find({})
       res.status(200).send(dataSaveClear)
    })
+   router.post('/data', async(req, res) =>{
+      const dataClear  = await ClearSave.find({})
+      res.status(200).send(dataClear)
+   })
+
+   router.post('/dataClearByMonth',async(req, res) =>{
+
+      const dataMonth = await ClearSave.aggregate([
+         { $match:
+            {$expr: {
+               $eq: [{ $month: "$date" }, Number(req.body.month)]
+            }}
+         },
+         {   
+            $group:{ 
+               _id:  { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+               time: { $first: "$date" },
+               sum:  { $sum: "$money"}, 
+            }
+         }
+      ])
+
+      res.status(200).send(dataMonth)
+      // console.log(dataMonth);
+
+
+   })
+
+
 
 module.exports = router

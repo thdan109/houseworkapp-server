@@ -24,6 +24,16 @@ router.get('/getData', async(req,res)=>{
    // console.log(data);
 })
 
+
+router.post('/getDataFeedBackForApp',async(req, res) =>{
+
+   const data = await FeedBack.find({})
+
+   res.status(200).send(data)
+
+
+})
+
 router.post('/checkFB', async(req,res) =>{
    const idUser = req.body.idUser
 

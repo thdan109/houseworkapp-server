@@ -13,7 +13,7 @@ var CookingSchema = new mongoose.Schema({
    "idStaff": [],
    "staff": [],
    "status": String,
-   "money": String
+   "money": Number
 })
 
 

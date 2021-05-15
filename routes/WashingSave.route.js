@@ -73,5 +73,35 @@ var Staff = require('../model/staff.model')
       const dataSave = await WashingSave.find({})
       res.status(200).send(dataSave)
    })
+   router.post('/data', async(req,res)=>{
+
+      const dataWashing = await WashingSave.find({})
+      res.status(200).send(dataWashing)
+
+   })
+
+
+   router.post('/dataClearByMonth',async(req, res) =>{
+
+      const dataMonth = await WashingSave.aggregate([
+         { $match:
+            {$expr: {
+               $eq: [{ $month: "$dateTake" }, Number(req.body.month)]
+            }}
+         },
+         {   
+            $group:{ 
+               _id:  { $dateToString: { format: "%Y-%m-%d", dateTake: "$dateTake" } },
+               time: { $first: "$dateTake" },
+               sum:  { $sum: "$money"}, 
+            }
+         }
+      ])
+
+      res.status(200).send(dataMonth)
+      // console.log(dataMonth);
+
+
+   })
 
 module.exports = router

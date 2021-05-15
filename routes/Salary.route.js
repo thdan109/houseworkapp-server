@@ -93,9 +93,19 @@ router.post('/countSalary', async(req, res) =>{
 
    })
 
-   
-
-
 })
+
+
+   router.post('/dataForAppStaff',async(req,res ) =>{
+      const dataSalary = await DataSalary.find({})
+      // console.log(data);
+      res.status(200).send(dataSalary)
+   })
+
+   router.post('/getDataSalaryByIdStaff', async(req, res ) =>{
+      const SalaryStaff = await  Salary.findOne({idStaff:  req.body.idStaff})
+      // console.log(data);
+      res.status(200).send(SalaryStaff)
+   })
 
 module.exports = router;

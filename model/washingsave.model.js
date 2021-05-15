@@ -11,7 +11,7 @@ var washingsaveSchema = new moongose.Schema({
    "idStaff": [],
    "staff": [],
    "note": [],
-   "money": String
+   "money": Number
 })
 var WashingSave = moongose.model('WashingSave', washingsaveSchema, 'washingsave')
 module.exports = WashingSave

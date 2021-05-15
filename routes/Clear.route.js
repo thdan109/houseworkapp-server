@@ -72,7 +72,8 @@ const { default: Axios } = require('axios');
    })
 
    router.post('/workStaff', async(req, res) =>{
-      const work =  await Clear.find({idStaff: req.body.id, date: req.body.nowDate })
+      
+      const work =  await Clear.find({$and: [{idStaff: req.body.id}, {date: {"$gte": new Date (Date.now(req.body.nowDate)-1*24*60*60*1000)}}, {date: { "$lt": new Date(Date.now(req.body.nowDate)+1*24*60*60*1000)}} ] })
       if (!work){
          res.status(200).send({work: 'Failed'})
       }else{
@@ -189,7 +190,6 @@ const { default: Axios } = require('axios');
             }
          })
 
-         
 
          // for ( var i of user.tokens){
          //    sendPushNotification(i.tokenDevices,dataclear.date.toDateString())

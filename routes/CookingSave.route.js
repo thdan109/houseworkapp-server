@@ -81,4 +81,35 @@ var Staff = require('../model/staff.model')
       res.status(200).send(savecook)
    })
 
+   router.post('/data', async(req, res) =>{
+      const dataCooking = await CookingSave.find({})
+      res.status(200).send(dataCooking)
+   })
+
+
+
+   router.post('/dataClearByMonth',async(req, res) =>{
+
+      const dataMonth = await CookingSave.aggregate([
+         { $match:
+            {$expr: {
+               $eq: [{ $month: "$date" }, Number(req.body.month)]
+            }}
+         },
+         {   
+            $group:{ 
+               _id:  { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+               time: { $first: "$date" },
+               sum:  { $sum: "$money"}, 
+            }
+         }
+      ])
+
+      res.status(200).send(dataMonth)
+      // console.log(dataMonth);
+
+
+   })
+
+
 module.exports = router
