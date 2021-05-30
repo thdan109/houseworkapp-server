@@ -180,7 +180,7 @@ router.post('/addStaff',uploadStaff.single('files'),async(req,res)=>{
       res.status(201).send({status: 'Oke'})
       res.status(201).send({staff,token})
     }catch(err){
-      res.status(400).send(err)
+      //  res.status(400).send(err)
     }
 
 })

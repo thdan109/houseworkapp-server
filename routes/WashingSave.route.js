@@ -104,4 +104,17 @@ var Staff = require('../model/staff.model')
 
    })
 
+   router.post('/getNumWork', async(req, res) =>{
+
+      const id = req.body.id
+
+      const data = await WashingSave.find({idStaff: id})
+
+      console.log(data.length);
+      res.status(200).send(data);
+
+   })
+
+
+
 module.exports = router

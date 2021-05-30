@@ -86,6 +86,13 @@ var Staff = require('../model/staff.model')
       res.status(200).send(dataCooking)
    })
 
+   router.post('/getNumWork', async(req,res) =>{
+
+      const id = req.body.id
+      const data = await CookingSave.find({idStaff: id})
+      res.status(200).send(data)
+
+   })
 
 
    router.post('/dataClearByMonth',async(req, res) =>{

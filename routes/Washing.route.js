@@ -72,7 +72,7 @@ var Service = require('../model/service.model')
             status: req.body.status
          }
          Washing.updateOne(condition, process).then(()=>{
-            
+            res.send(200)
          })
 
       }) 
@@ -96,7 +96,7 @@ var Service = require('../model/service.model')
       }
    })
 
-   router.post('/workStaff', async(req, res) =>{
+   router.post('/workStaffAll', async(req, res) =>{
       const work =  await Washing.find({idStaff: req.body.id })
       if (!work){
          res.status(200).send({work: 'Failed'})
@@ -105,6 +105,7 @@ var Service = require('../model/service.model')
       }
    
    })
+   
    
    router.post('/workStaffById',async(req,res) =>{
       const workById = await Washing.findOne({ idStaff: req.body.idStaff, _id: req.body.idWork })
@@ -272,7 +273,7 @@ var Service = require('../model/service.model')
          const condition = { _id: id }
          const process = { status: status }
          Washing.updateOne(condition, process).then(()=>{
-            
+            res.status(200).send({update: 'Oke'})
          })
       })
 

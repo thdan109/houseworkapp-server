@@ -85,6 +85,15 @@ var Chat = require('../model/chat.model')
       res.status(200).send(dataClear)
    })
 
+   router.post('/getNumWork', async(req,res) =>{
+      const nowdate = new Date();
+      console.log(nowdate.getUTCMonth()+1);
+      const id = req.body.id
+      const data = await ClearSave.find({idStaff: id})
+      res.status(200).send(data)
+
+   })
+
    router.post('/dataClearByMonth',async(req, res) =>{
 
       const dataMonth = await ClearSave.aggregate([

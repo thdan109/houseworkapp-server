@@ -90,7 +90,7 @@ const { default: Axios } = require('axios');
             status: req.body.status
          }
          Cooking.updateOne(condition, process).then(()=>{
-            
+            res.send(200)
          })
 
       }) 
@@ -267,7 +267,7 @@ const { default: Axios } = require('axios');
          const condition = { _id: id }
          const process = { status: status }
          Cooking.updateOne(condition, process).then(()=>{
-            
+            res.status(200).send({update: 'Oke'})
          })
       })
 

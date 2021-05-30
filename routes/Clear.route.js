@@ -34,7 +34,7 @@ const { default: Axios } = require('axios');
 
    router.post('/create', async(req,res)=>{
       const firstStatus = "Đang chờ xác nhận"
-      const dateprocessed  = (new Intl.DateTimeFormat('en-US').format(req.body.date))
+      // const dateprocessed  = (new Intl.DateTimeFormat('en-US').format(req.body.date))
       console.log(req.body);
       console.log(req.body.time);
 
