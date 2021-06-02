@@ -84,6 +84,14 @@ router.post('/statusStaff', async(req, res)=>{
 
 
 })
+
+router.post('/dataStaffForRate', async(req,res)=>{
+   // console.log(req.body.id);
+   const Staff = await dataStaff.findOne({_id: req.body.id})   
+   res.status(200).send(Staff)
+   // console.log(Staff);
+})
+
 router.post('/statusStaffCooking', async(req, res)=>{
    const condition = "Bộ phận Nấu ăn"
    const time = req.body.dttime[0].time

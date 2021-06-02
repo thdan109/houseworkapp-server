@@ -9,6 +9,7 @@ var Washing = require('../model/washing.model')
 var ClearSave = require('../model/clearsave.model')
 var CookingSave = require('../model/cookingsave.model')
 var WashingSave = require('../model/washingsave.model')
+var bcrypt  = require('bcrypt');
 
 
 var storage = multer.diskStorage({
@@ -29,6 +30,7 @@ router.get('/dataUser', function(req,res){
       res.json(result)
    })
 })
+
 
 
 //Register user
@@ -55,7 +57,34 @@ router.post('/register',async(req,res)=>{
     }
 
 })
+// Changepass
+router.post('/changepw', async(req, res) =>{
 
+   const username = req.body.username
+   const newpass = req.body.passnew
+   const oldpass = req.body.passold
+   const tokendv = req.body.tokendv
+
+   // const hashpassword = await bcrypt.hash(newpass, 8)
+   // console.log(username, newpass,oldpass);
+   try{
+      const user = await User.findByCredentials(username, oldpass)
+      // console.log(user);
+      if (user){
+         user.password = newpass
+         await user.save()
+         const token = await user.generateAuthToken(tokendv)
+         res.status(201).send({user, token})
+      }else if (!user){
+         return res.status(400).send({error: "Fail"})
+      }
+
+   }catch (error) {
+      res.status(401).send(error)
+   }
+
+
+})
 
 
 

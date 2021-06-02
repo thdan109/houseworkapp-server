@@ -25,6 +25,7 @@ var StaffSchema = new mongoose.Schema({
    "time": [String],
    "datework": [String],
    "numberWorkMonth":Number,
+   "rating": Number,
    tokens: [{
       token: {
           type: String,

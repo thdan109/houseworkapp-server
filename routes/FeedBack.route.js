@@ -10,12 +10,14 @@ router.post('/addFeedBack', async(req,res) =>{
       idUser: req.body.idUser,
       nameUser: req.body.nameUser,
       rate: req.body.number,
+      type: req.body.type,
       contentfeedback: req.body.feedback
    }).then(result =>{
       res.status(200).send({status: 'Oke'})
    }).catch( err =>{
       
    })
+
 })
 
 router.get('/getData', async(req,res)=>{
@@ -27,9 +29,39 @@ router.get('/getData', async(req,res)=>{
 
 router.post('/getDataFeedBackForApp',async(req, res) =>{
 
-   const data = await FeedBack.find({})
+   // const data = await FeedBack.find({})
+   const dataClear = await FeedBack.find({type: 'clear'})
+   let num = 0;
+   dataClear.map(dt  =>{
+      num = num + dt.rate
+   })
+   const rate_valclear = num / dataClear.length
+   // res.status(200).send({dataClear: dataClear, rate_val: rate_val})
+   
+   const dataCooking = await FeedBack.find({type: 'cooking'})
+   let num1 = 0;
+   dataCooking.map(dt  =>{
+      num1 = num1 + dt.rate
+   })
+   const rate_valcooking = num1 / dataCooking.length
 
-   res.status(200).send(data)
+   const dataWashing = await FeedBack.find({type: 'washing'})
+   let num2 = 0;
+   dataWashing.map(dt  =>{
+      num2 = num2 + dt.rate
+   })
+   const rate_valwashing = num2 / dataWashing.length
+
+   res.status(200).send({
+      dataWashing: dataWashing, 
+      rate_valwashing: rate_valwashing,
+      dataClear: dataClear, 
+      rate_valclear: rate_valclear, 
+      dataCooking: dataCooking, 
+      rate_valcooking: rate_valcooking 
+   })
+   // console.log(rate_val);
+ 
 
 
 })

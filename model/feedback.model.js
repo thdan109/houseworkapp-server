@@ -4,8 +4,8 @@ var FeedBackSchema = new mongoose.Schema({
    "idUser":String,
    "nameUser": String,
    "contentfeedback":String,
-   "rate": String
-
+   "rate": String,
+   "type":String
 })
 
 var FeedBack =  mongoose.model('FeedBack', FeedBackSchema ,'feedback')

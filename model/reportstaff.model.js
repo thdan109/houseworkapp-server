@@ -3,7 +3,9 @@ var ReportStaffSchema = new mongoose.Schema({
    "idStaff": String,
    "idUser": String,
    "idWork": String,
+   "nameStaff": String,
    // "type": String,
+   "rating": Number,
    "note": String
 })
 
