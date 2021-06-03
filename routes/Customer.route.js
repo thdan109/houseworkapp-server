@@ -10,6 +10,7 @@ var ClearSave = require('../model/clearsave.model')
 var CookingSave = require('../model/cookingsave.model')
 var WashingSave = require('../model/washingsave.model')
 var bcrypt  = require('bcrypt');
+const { default: Axios } = require('axios');
 
 
 var storage = multer.diskStorage({
@@ -35,7 +36,7 @@ router.get('/dataUser', function(req,res){
 
 //Register user
 router.post('/register',async(req,res)=>{
-   console.log((req.body));
+   // console.log((req.body));
    try{
       const user = new User({
          username: req.body.username,
@@ -109,7 +110,7 @@ router.post('/changepw', async(req, res) =>{
          const token = await user.generateAuthToken(tokenDevice)
          res.status(201).send({user, token})
       } catch (error) { 
-         res.status(400).send(error)
+         res.status(201).send(error)
       }
    })
 
@@ -203,10 +204,10 @@ router.post('/imageUser',uploadUser.single('photo'),  async(req, res)=>{
       })
       const user = req.user
       const id = user._id
-      const orderCooking = await Cooking.find({$and: [{idUser: id}, {status: {$ne: "Chờ thu tiền"}}]})
+      const orderCooking = await Cooking.find({$and: [{idUser: id}, {status: {$ne: "Chờ thu tiền"}}]}).populate({path: 'reqStaff', select: 'fullnameStaff'})
       // const newOrder = {...order._doc, Service: 'Cooking'}
       const orderWashing = await Washing.find({$and: [{idUser: id}, {status: {$ne: "Chờ thu tiền"}}]})
-      const orderClear = await Clear.find({$and: [{idUser: id}, {status: {$ne: "Chờ thu tiền"}}]})
+      const orderClear = await Clear.find({$and: [{idUser: id}, {status: {$ne: "Chờ thu tiền"}}]}).populate({path: 'reqStaff', select: 'fullnameStaff'})
       res.status(200).send({orderCooking, orderClear, orderWashing})
       // console.log(orderWashing);
       // console.log(orderWashing);
@@ -229,5 +230,87 @@ router.post('/imageUser',uploadUser.single('photo'),  async(req, res)=>{
       // console.log(orderCooking);
       // console.log(orderClear);
    })
+
+   router.post('/pushNotifiClear',async(req,res) =>{
+      // console.log(req.body.id);
+      const id = req.body.id
+      const idWork = req.body.idWork
+      const userTB = await User.findOne({_id: id})
+      const dataClear = await Clear.findOne({_id: idWork})
+      // console.log(dataClear);
+      for (var i of userTB.tokens){
+         sendPushNotificationUser(i.tokenDevices, dataClear.date.toDateString() )
+      }
+
+      // Clear.findOne({_id: idWork}).then(res =>{
+      //    const condition = { _id: idWork }
+      //    const process = { status: "Đang chờ phản hồi" }
+      //    Clear.updateOne(condition, process)
+         
+      // })
+      if (dataClear){
+         const condition = { _id: idWork }
+         const process = { status: "Đang chờ phản hồi" }
+         await Clear.updateOne(condition, process)
+         res.status(200).send({status: "Oke"})
+      }else{
+         res.status(400).send({status: "Fail"})
+      }
+     
+
+   })
+   router.post('/pushNotifiCooking',async(req,res) =>{
+      // console.log(req.body.id);
+      const id = req.body.id
+      const idWork = req.body.idWork
+      const userTB = await User.findOne({_id: id})
+      const dataCooking = await Cooking.findOne({_id: idWork})
+      // console.log(dataClear);
+      for (var i of userTB.tokens){
+         sendPushNotificationUser(i.tokenDevices, dataCooking.date.toDateString() )
+      }
+
+      // Clear.findOne({_id: idWork}).then(res =>{
+      //    const condition = { _id: idWork }
+      //    const process = { status: "Đang chờ phản hồi" }
+      //    Clear.updateOne(condition, process)
+         
+      // })
+      if (dataCooking){
+         const condition = { _id: idWork }
+         const process = { status: "Đang chờ phản hồi" }
+         await Cooking.updateOne(condition, process)
+         res.status(200).send({status: "Oke"})
+      }else{
+         res.status(400).send({status: "Fail"})
+      }
+     
+
+   })
+
+
+
+   async function sendPushNotificationUser(expoPushToken,date) {
+      var text = "Nhân viên hiện đã bận. Bạn có thể hủy hoặc vẫn tiếp tục công việc với nhân viên khác!"
+      const message = {
+        to: expoPushToken,
+        sound: 'default',
+        title: date + "\fNhân viên bận!",
+        body: text,
+        data: { data: 'goes here' },
+      };
+      await Axios.post('https://exp.host/--/api/v2/push/send', JSON.stringify(message), {
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
+        },
+       
+      }).then(()=>{
+
+      } ).catch(()=>{
+
+      });
+    }
 
 module.exports = router;

@@ -1,5 +1,5 @@
 var mongoose = require('mongoose')
-
+var Staff = require('./staff.model')
 var CookingSchema = new mongoose.Schema({
    "idUser": {type: String},
    "fullname": String,
@@ -13,6 +13,7 @@ var CookingSchema = new mongoose.Schema({
    "idStaff": [],
    "staff": [],
    "status": String,
+   "reqStaff": {type: mongoose.Schema.Types.ObjectId, ref: 'Staff'},
    "money": Number
 })
 

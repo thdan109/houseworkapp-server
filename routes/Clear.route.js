@@ -12,9 +12,9 @@ var Voucher = require('../model/voucher.model')
 const { default: Axios } = require('axios');
 
    router.get('/getData', async(req,res) =>{
-      const clear = await Clear.find({})
+      const clear = await Clear.find({}).populate({path: 'reqStaff', select: 'fullnameStaff'})
       res.status(200).send(clear)
-      
+      // console.log(clear);
    })
 
    router.get('/getDataForApp', async(req, res) =>{
@@ -35,8 +35,15 @@ const { default: Axios } = require('axios');
    router.post('/create', async(req,res)=>{
       const firstStatus = "Đang chờ xác nhận"
       // const dateprocessed  = (new Intl.DateTimeFormat('en-US').format(req.body.date))
-      console.log(req.body);
-      console.log(req.body.time);
+      // console.log(req.body);
+      // console.log(req.body.time);
+      let staff = null
+      if (!req.body.staff){
+         staff = null 
+      }else{
+         staff = req.body.staff.id
+      }
+      // console.log(staff);
 
       await Clear.create({
          idUser: req.body.userID,
@@ -48,10 +55,14 @@ const { default: Axios } = require('axios');
          timeWork: req.body.timework,
          status: firstStatus,
          numRoom: req.body.numberroom,
-         money: req.body.money
+         money: req.body.money,
+         reqStaff: staff
       })
 
+
       const dataVoucher = req.body.voucher
+      console.log(dataVoucher);
+      console.log(req.body.km);
       if (req.body.km !== 0){
          const id = dataVoucher.map(dt => dt._id)
          await Voucher.findOne({_id: id}).then(result =>{
@@ -73,7 +84,7 @@ const { default: Axios } = require('axios');
 
    router.post('/workStaff', async(req, res) =>{
       
-      const work =  await Clear.find({$and: [{idStaff: req.body.id}, {date: {"$gte": new Date (Date.now(req.body.nowDate)-1*24*60*60*1000)}}, {date: { "$lt": new Date(Date.now(req.body.nowDate)+1*24*60*60*1000)}} ] })
+      const work =  await Clear.find({$and: [{idStaff: req.body.id}, {date: {"$gte": new Date (Date.now(req.body.nowDate)-1*24*60*60*1000)}}, {date: { "$lt": new Date(Date.now(req.body.nowDate))}} ] })
       if (!work){
          res.status(200).send({work: 'Failed'})
       }else{
@@ -99,10 +110,20 @@ const { default: Axios } = require('axios');
             status: req.body.status
          }
          Clear.updateOne(condition, process).then(()=>{
-            res.send(200)
+            res.send(200)  
          })
 
       }) 
+   })
+
+   router.post('/continueWork', async(req,res)=>{
+      await Clear.findOne({_id: req.body.id}).then(data =>{
+         const condition =  {_id: req.body.id}
+         const process = {status: req.body.status}
+         Clear.updateOne(condition, process).then(()=>{
+            res.send(200)
+         })
+      })
    })
 
    router.post('/cancelWork', async(req,res) =>{

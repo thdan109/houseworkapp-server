@@ -33,6 +33,7 @@ router.post('/create', async(req, res )=>{
 router.get('/getData', async(req, res)=>{
    const data = await Leave.find({})
    res.status(200).send(data)
+   // console.log(data);
 })
 
 router.post('/acceptLeave', async(req, res) =>{

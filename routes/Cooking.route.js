@@ -12,7 +12,7 @@ var Voucher = require('../model/voucher.model')
 const { default: Axios } = require('axios');
 
    router.get('/dataCooking',async(req,res)=>{
-      Cooking.find({}).then(data=>{
+      Cooking.find({}).populate({path: 'reqStaff', select: 'fullnameStaff'}).then(data=>{
          res.json(data)
       })
    })
@@ -38,7 +38,14 @@ const { default: Axios } = require('axios');
       const dt = Object.entries(json).map(([key, value])=>{
           return (`${value}`)
       })
-      // console.log(dt);
+      // console.log(req.query.staff);
+      let staff = null
+      if (!req.query.staff){
+         staff = null 
+      }else{
+         staff = req.query.staff
+      }
+      
       try {
          const cooking = new  Cooking({
             idUser: req.user._id,
@@ -51,7 +58,8 @@ const { default: Axios } = require('axios');
             timeStart: req.query.dtTime,
             number: req.query.dtnumCus,
             status: firstStatus,
-            money: req.query.dtMoney
+            money: req.query.dtMoney,
+            reqStaff: staff
          })
          await cooking.save()
          res.status(200).send({status: 'Oke'})
@@ -59,15 +67,18 @@ const { default: Axios } = require('axios');
         console.log('aaaa');
       }
 
-      const dataVoucher = req.body.voucher
-      if (req.body.km !== 0){
+      
+      const dataVoucher = req.query.voucher
+      // console.log(dataVoucher);
+      // console.log(req.query.km);
+      if (Number(req.query.km) !== 0){
          const id = dataVoucher.map(dt => dt._id)
          await Voucher.findOne({_id: id}).then(result =>{
             const condition = {_id: id}
             const process ={
                $push :
                {
-                  idUser: {$each: [req.body.userID]}
+                  idUser: {$each: [req.user._id]}
                }
             }
             Voucher.updateOne(condition, process).then(()=>{
@@ -94,6 +105,16 @@ const { default: Axios } = require('axios');
          })
 
       }) 
+   })
+
+   router.post('/continueWork', async(req,res)=>{
+      await Cooking.findOne({_id: req.body.id}).then(data =>{
+         const condition =  {_id: req.body.id}
+         const process = {status: req.body.status}
+         Cooking.updateOne(condition, process).then(()=>{
+            res.send(200)
+         })
+      })
    })
 
    router.post('/cancelWork', async(req,res) =>{

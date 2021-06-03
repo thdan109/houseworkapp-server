@@ -4,6 +4,7 @@ var DataSalarySchema = new mongoose.Schema({
    "work": Number,
    "bonus": Number,
    "absent": Number,
+   "salary":Number
 })
 
 var DataSalary = mongoose.model('DataSalary', DataSalarySchema, 'datasalary')

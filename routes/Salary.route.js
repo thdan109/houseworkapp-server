@@ -27,7 +27,7 @@ router.get('/getData', async(req,res) =>{
 router.post('/updateSalary', async(req,res) =>{
    const dataUpdate = req.body.data
    const id = req.body.id
-   console.log(dataUpdate.target);
+   // console.log(dataUpdate.target);
    await DataSalary.findOne({ _id: id}).then(result =>{
       if ((!dataUpdate.target) || (!dataUpdate.work) || (!dataUpdate.bonus) || (!dataUpdate.absent)){
          res.status(200).send({Update: 'Update Salary not working!'})
@@ -37,7 +37,8 @@ router.post('/updateSalary', async(req,res) =>{
             target: Number(dataUpdate.target),
             bonus: Number(dataUpdate.bonus),
             absent: Number(dataUpdate.absent),
-            work: Number(dataUpdate.work)
+            work: Number(dataUpdate.work),
+            salary: Number(dataUpdate.salary)
          }
          DataSalary.updateOne(condition, process).then(()=>{
             res.status(200).send({Update: 'Update salary successfully!'})
@@ -98,13 +99,15 @@ router.post('/countSalary', async(req, res) =>{
 
    router.post('/dataForAppStaff',async(req,res ) =>{
       const dataSalary = await DataSalary.find({})
-      // console.log(data);
+      // console.log(dataSalary);
       res.status(200).send(dataSalary)
    })
 
    router.post('/getDataSalaryByIdStaff', async(req, res ) =>{
-      const SalaryStaff = await  Salary.findOne({idStaff:  req.body.idStaff})
-      // console.log(data);
+      // console.log(req.body.idStaff);
+      const SalaryStaff = await Salary.find({idStaff:  req.body.idStaff})
+      // console.log(SalaryStaff);
+      
       res.status(200).send(SalaryStaff)
    })
 

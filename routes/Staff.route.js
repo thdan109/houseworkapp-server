@@ -4,7 +4,8 @@ const multer = require("multer");
 var authStaff = require("../middleware/authStaff")
 var dataStaff = require('../model/staff.model.js')
 var Schedule = require('../model/schedule.model.js')
-var Leave = require('../model/leave.model')
+var Leave = require('../model/leave.model');
+const Staff = require('../model/staff.model.js');
 
 
 
@@ -46,6 +47,17 @@ router.get('/getStaffByIdLoading', authStaff, async(req,res) =>{
    res.status(200).send(req.staff)
 })
 
+router.post('/dataStaffClear', async(req, res) =>{
+   const dataStaffClear = await Staff.find({department: "Bộ phận Vệ sinh nhà"})
+   res.status(200).send(dataStaffClear)
+})
+router.post('/dataStaffCooking', async(req, res) =>{
+   const dataStaffCooking = await Staff.find({department: "Bộ phận Nấu ăn"})
+   res.status(200).send(dataStaffCooking)
+})
+
+
+
 
 router.post('/statusStaff', async(req, res)=>{
 
@@ -67,12 +79,12 @@ router.post('/statusStaff', async(req, res)=>{
    // res.status(200).send(dts)
    const dts = []
    if ( idLeave.length === 0){
-      const dts =  await dataStaff.find({ $and: [{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } )
+      const dts =  await dataStaff.find({ $and: [{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } ).sort([['numberWorkMonth',1]])
       res.status(200).send(dts)
    }else if (idLeave.length > 0)
       {for ( var i of idLeave){
          console.log(i);
-         await dataStaff.findOne({ $and: [{_id: {$ne: i}},{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } ).then(res =>{
+         await dataStaff.findOne({ $and: [{_id: {$ne: i}},{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } ).sort([['numberWorkMonth',1]]).then(res =>{
             // console.log(res);
             dts.push(res)
       })
@@ -105,12 +117,12 @@ router.post('/statusStaffCooking', async(req, res)=>{
    })
    const dts = []
    if ( idLeave.length === 0){
-      const dts1 = await dataStaff.find({ $and: [{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } )
+      const dts1 = await dataStaff.find({ $and: [{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } ).sort([['numberWorkMonth',1]])
       res.status(200).send(dts1)
    }else if (idLeave.length > 0)
       {for ( var i of idLeave){
          console.log(i);
-         await dataStaff.findOne({ $and: [{_id: {$ne: i}}, {department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } )
+         await dataStaff.findOne({ $and: [{_id: {$ne: i}}, {department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } ).sort([['numberWorkMonth',1]])
          .then(res => {
           // console.log(res);
             dts.push(res)
@@ -139,11 +151,11 @@ router.post('/statusStaffWash', async(req, res) =>{
    })
    const dts = []
    if ( idLeave.length === 0){
-      const dataTimeWash = await dataStaff.find({ $and: [ {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{datework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] })
+      const dataTimeWash = await dataStaff.find({ $and: [ {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{datework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] }).sort([['numberWorkMonth',1]])
       res.status(200).send(dataTimeWash)
    }else if (idLeave.length > 0){
       {for ( var i of idLeave){
-         await dataStaff.findOne({ $and: [{_id: {$ne: i}}, {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{datework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] })
+         await dataStaff.findOne({ $and: [{_id: {$ne: i}}, {department: departmentCondition}, {$or: [ {$and: [{time: { $ne: timeSend}}, {time: {$ne: timeTake}}]},{$and: [{datework : {$ne: dateSend}}, { datework: { $ne:  dateTake}}]} ]}] }).sort([['numberWorkMonth',1]])
          .then( res =>{
             dts.push(res)
          })

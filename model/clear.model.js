@@ -1,4 +1,5 @@
 var mongoose = require('mongoose')
+var Staff = require('./staff.model')
 var clearSchema = new mongoose.Schema({
    "idUser": String,
    "username": String,
@@ -10,6 +11,7 @@ var clearSchema = new mongoose.Schema({
    "timeStart": String,
    "idStaff": [],
    "nameStaff": [],
+   "reqStaff": {type: mongoose.Schema.Types.ObjectId, ref: 'Staff'},
    "status": String,
    "money": String
 })
