@@ -13,7 +13,7 @@ var cookingsaveSchema = new moongose.Schema({
    "idStaff": [],
    "staff": [],
    "status": String,
-   "money": String
+   "money":  Number
 })
 
 var CookingSave = moongose.model('CookingSave', cookingsaveSchema,'cookingsave')

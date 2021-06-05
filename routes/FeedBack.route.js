@@ -33,22 +33,23 @@ router.post('/getDataFeedBackForApp',async(req, res) =>{
    const dataClear = await FeedBack.find({type: 'clear'})
    let num = 0;
    dataClear.map(dt  =>{
-      num = num + dt.rate
+      num = num + Number(dt.rate)
    })
+   console.log(num);
    const rate_valclear = num / dataClear.length
    // res.status(200).send({dataClear: dataClear, rate_val: rate_val})
    
    const dataCooking = await FeedBack.find({type: 'cooking'})
    let num1 = 0;
    dataCooking.map(dt  =>{
-      num1 = num1 + dt.rate
+      num1 = num1 + Number(dt.rate)
    })
    const rate_valcooking = num1 / dataCooking.length
 
    const dataWashing = await FeedBack.find({type: 'washing'})
    let num2 = 0;
    dataWashing.map(dt  =>{
-      num2 = num2 + dt.rate
+      num2 = num2 + Number(dt.rate)
    })
    const rate_valwashing = num2 / dataWashing.length
 

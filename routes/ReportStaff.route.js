@@ -30,14 +30,17 @@ router.post('/add',async(req,res)=>{
       const process = { rating: rating_val }
 
       Staff.updateOne(condition, process).then(res =>{
-         console.log('aaaaaa');
+         // console.log('aaaaaa');
       })
    })
 
-
-
 })
 
+
+router.post('/getDataRating', async(req, res) =>{
+   const dataRate = await ReportStaff.find({idStaff: req.body.idStaff})
+   res.status(200).send(dataRate)
+})
 
 
 

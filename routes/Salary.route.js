@@ -56,6 +56,7 @@ router.post('/countSalary', async(req, res) =>{
    const target = dataSalary.map(dt => {return dt.target})
    const bonus = dataSalary.map(dt => {return dt.bonus})
    const absent = dataSalary.map(dt => {return dt.absent})
+   const salary_val = dataSalary.map(dt =>{return dt.salary})
 
    const dataStaff = await Staff.find({})
    dataStaff.map( data =>{
@@ -67,7 +68,7 @@ router.post('/countSalary', async(req, res) =>{
       const date = new Date()
       const dateprocessed  = (new Intl.DateTimeFormat('en-US').format(date));
       
-      const  totalSalary = work*numWorkMonth_val + bonus*(numWorkMonth_val-target) - absent*absent_val
+      const  totalSalary = work*numWorkMonth_val + bonus*(numWorkMonth_val-target) - absent*absent_val + salary_val
       Salary.create({
          idStaff: idStaff,
          nameStaff: nameStaff,

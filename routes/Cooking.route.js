@@ -295,7 +295,7 @@ const { default: Axios } = require('axios');
    })
 
    router.post('/workStaff', async(req, res) =>{
-      const work =  await Cooking.find({idStaff: req.body.id, date: req.body.nowDate })
+      const work =  await Cooking.find({$and: [{idStaff: req.body.id}, {date: {"$gte": new Date (Date.now(req.body.nowDate)-1*24*60*60*1000)}}, {date: { "$lt": new Date(Date.now(req.body.nowDate))}} ] })
       if (!work){
          res.status(200).send({work: 'Failed'})
       }else{

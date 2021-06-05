@@ -81,7 +81,7 @@ var Staff = require('../model/staff.model')
    })
 
 
-   router.post('/dataClearByMonth',async(req, res) =>{
+   router.post('/dataWashingByMonth',async(req, res) =>{
 
       const dataMonth = await WashingSave.aggregate([
          { $match:
@@ -91,7 +91,7 @@ var Staff = require('../model/staff.model')
          },
          {   
             $group:{ 
-               _id:  { $dateToString: { format: "%Y-%m-%d", dateTake: "$dateTake" } },
+               _id:  { $dateToString: { format: "%Y-%m-%d", date: "$dateTake" } },
                time: { $first: "$dateTake" },
                sum:  { $sum: "$money"}, 
             }
@@ -100,9 +100,50 @@ var Staff = require('../model/staff.model')
 
       res.status(200).send(dataMonth)
       // console.log(dataMonth);
+   })
+   router.post('/totalWashing',async(req, res) =>{
+
+      const dataMonth = await WashingSave.aggregate([
+         { $match:
+            {$expr: {
+               $eq: [{ $month: "$dateTake" }, Number(req.body.month)]
+            }}
+         },
+         {   
+            $group:{ 
+               _id:  { $dateToString: { format: "%m", date: "$dateTake" } },
+               // time: { $month: "$dateTake" },
+               sum:  { $sum: "$money"} 
+            }
+         }
+      ])
+
+      res.status(200).send(dataMonth)
+      // console.log(dataMonth);
+   })
+   router.post('/totalWashingWorkVal',async(req, res) =>{
+
+      const m = req.body.month
+
+      const dataMonth = await WashingSave.aggregate([
+         {
+            $match: {
+               $expr: {
+                  $eq: [{ $month: "$dateTake" }, Number(req.body.month)]
+               }
+            }
+          },
+          {
+            $count: m
+          }
+      ])
+
+      res.status(200).send(dataMonth)
+      // console.log(dataMonth);
 
 
    })
+
 
    router.post('/getNumWork', async(req, res) =>{
 

@@ -24,6 +24,10 @@ router.post('/addVoucher', async(req, res) =>{
 
 })
 
+router.post('/showVoucherById', async(req,res) =>{
+   const data =  await Voucher.findOne({_id: req.body.id})
+   res.status(200).send(data)
+})
 
 router.post('/getVoucherById', async(req, res ) =>{
    // console.log(req.body.idUser);

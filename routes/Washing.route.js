@@ -87,7 +87,8 @@ var Service = require('../model/service.model')
    })
 
    router.post('/workStaff', async(req, res) =>{
-      const work =  await Washing.find({idStaff: req.body.id, dateSend: req.body.nowDate })
+      // console.log(req.body.id);
+      const work =  await Washing.find({$and: [{idStaff: req.body.id}, {dateSend: {"$gte": new Date (Date.now(req.body.nowDate)-1*24*60*60*1000)}}, {dateSend: { "$lt": new Date(Date.now(req.body.nowDate))}} ] })
       if (!work){
          res.status(200).send({work: 'Failed'})
       }else{
