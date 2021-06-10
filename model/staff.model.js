@@ -23,6 +23,7 @@ var StaffSchema = new mongoose.Schema({
    "idWork": [],
    "absent": Number,
    "time": [String],
+   // "timeEnd" : [String],
    "datework": [String],
    "numberWorkMonth":Number,
    "rating": Number,

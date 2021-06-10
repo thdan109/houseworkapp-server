@@ -3,6 +3,7 @@ var router = express.Router()
 var Cooking = require('../model/cooking.model')
 var CookingSave = require('../model/cookingsave.model')
 var Staff = require('../model/staff.model')
+var Chat = require('../model/chat.model')
 
    router.post('/create', async(req, res)=>{
       const work = req.body.work
@@ -37,8 +38,6 @@ var Staff = require('../model/staff.model')
 
          })
       })
-
-
 
       await CookingSave.create({
          idWork: work._id,

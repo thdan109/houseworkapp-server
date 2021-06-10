@@ -17,6 +17,9 @@ var Chat = require('../model/chat.model')
                         
             const indexOfidWork = idWork.indexOf(work._id)
             
+            // const timeEnd = result.timeEnd
+            // timeEnd.splice(indexOfidWork,1)
+
             const time = result.time
             time.splice(indexOfidWork,1)
             
@@ -27,6 +30,7 @@ var Chat = require('../model/chat.model')
             const process = {
                idWork: idWorkFilter,
                time: time,
+               // timeEnd: timeEnd,
                datework: date
             }
             

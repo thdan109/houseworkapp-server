@@ -65,7 +65,14 @@ router.post('/statusStaff', async(req, res)=>{
    const condition = "Bộ phận Vệ sinh nhà"
    const time = req.body.dttime[0].time
    const date = req.body.dttime[1].date
+   const timeWork = req.body.dttime[2].timeWork
+   // console.log(time);
    // const datetest  = '2021-05-13T17:00:00.000Z'
+
+   const a  = time.split(':')
+   const nextHours = Number(a[0])-Number(timeWork)
+   const endHours = nextHours+":"+a[1]
+   // console.log(endHours);
 
    const dleave = await Leave.find({$and:  [{date: date}, {status: 'Đã duyệt'}] })
 
@@ -79,12 +86,12 @@ router.post('/statusStaff', async(req, res)=>{
    // res.status(200).send(dts)
    const dts = []
    if ( idLeave.length === 0){
-      const dts =  await dataStaff.find({ $and: [{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } ).sort([['numberWorkMonth',1]])
+      const dts =  await dataStaff.find({ $and: [{department: condition},{$or: [ {time: {$ne: time}}, {datework : { $ne : date} } ]} ] } ).sort([['numberWorkMonth',1]])
       res.status(200).send(dts)
    }else if (idLeave.length > 0)
       {for ( var i of idLeave){
          console.log(i);
-         await dataStaff.findOne({ $and: [{_id: {$ne: i}},{department: condition},{$or: [ {time : { $ne : time}}, {datework : { $ne : date} } ]} ] } ).sort([['numberWorkMonth',1]]).then(res =>{
+         await dataStaff.findOne({ $and: [{_id: {$ne: i}},{department: condition},{$or: [{time: {$ne: time}} , {datework : { $ne : date} } ]} ] } ).sort([['numberWorkMonth',1]]).then(res =>{
             // console.log(res);
             dts.push(res)
       })

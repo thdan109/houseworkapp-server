@@ -80,7 +80,7 @@ router.post('/countSalary', async(req, res) =>{
       }).then(result =>{
          res.status(200).send({status: 'Create Salary Successfully!'})
       }).catch(err=>{
-         res.status(200).send({status: 'No'})
+         res.status(301).send({status: 'No'})
       })
       
       const condition = {_id: data._id }

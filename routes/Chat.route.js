@@ -15,7 +15,7 @@ var User = require('../model/customer.model')
    })
 
    router.post('/listChat', async(req,res)=>{
-      const data =  await Chat.find({idStaff: req.body.id}).populate('idUser').populate({path: 'idStaff', select: 'avatarStaff'})
+      const data =  await Chat.find({idStaff: req.body.id}).populate('idUser').populate({path: 'idStaff', select: 'avatarStaff'}).sort([['date',-1]])
       // data.map(dt =>{
       //    console.log(dt.idStaff)
       // })

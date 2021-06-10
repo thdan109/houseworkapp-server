@@ -8,6 +8,7 @@ var clearSchema = new mongoose.Schema({
    "area": String,
    "numRoom": String,
    "timeWork":String,
+   "timeEnd": String,
    "timeStart": String,
    "idStaff": [],
    "nameStaff": [],

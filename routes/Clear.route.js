@@ -44,6 +44,11 @@ const { default: Axios } = require('axios');
          staff = req.body.staff.id
       }
       // console.log(staff);
+      
+      const a  = req.body.time.split(':')
+      const nextHours = Number(a[0])+Number(req.body.timework)
+      const endHours = nextHours+":"+a[1]
+      console.log(endHours);
 
       await Clear.create({
          idUser: req.body.userID,
@@ -52,6 +57,7 @@ const { default: Axios } = require('axios');
          date: req.body.date,
          area: req.body.area,
          timeStart: req.body.time,
+         timeEnd: endHours,
          timeWork: req.body.timework,
          status: firstStatus,
          numRoom: req.body.numberroom,
@@ -61,7 +67,7 @@ const { default: Axios } = require('axios');
 
 
       const dataVoucher = req.body.voucher
-      console.log(dataVoucher);
+      // console.log(dataVoucher);
       console.log(req.body.km);
       if (req.body.km !== 0){
          const id = dataVoucher.map(dt => dt._id)
@@ -156,6 +162,7 @@ const { default: Axios } = require('axios');
       // console.log(ids);
       const idClearTB = req.body.data[2].id;
       const idUserTB = req.body.data[3].idUser;
+      // console.log(idUserTB);
       const userTB = await User.findOne({_id: idUserTB})
       const dataclearTB = await Clear.findOne({ _id: idClearTB })
       for ( var i of userTB.tokens){
@@ -185,6 +192,7 @@ const { default: Axios } = require('axios');
 
       for ( var i in ids){
          const time= req.body.data[0].time;
+         // const timeEnd = req.body.data[4].timeEnd
          const date = req.body.data[1].date
          const idStaff = ids[i]
          const idClear = req.body.data[2].id;
@@ -237,6 +245,7 @@ const { default: Axios } = require('axios');
                {
                   idWork: {$each: [idClear]},
                   time: {$each: [time]},
+                  // timeEnd: {$each: [timeEnd]},
                   datework: {$each: [date]}
                },
                $inc:  { numberWorkMonth: 1 }

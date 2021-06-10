@@ -3,7 +3,7 @@ var router = express.Router()
 var Washing = require('../model/washing.model')
 var WashingSave = require('../model/washingsave.model')
 var Staff = require('../model/staff.model')
-
+var Chat = require('../model/chat.model')
 
    router.post('/create', async(req,res)=>{
       const work = req.body.work
@@ -69,7 +69,7 @@ var Staff = require('../model/staff.model')
 
    })
 
-   router.get('/dataSaveWasing', async(req, res)=>{
+   router.get('/dataSaveWashing', async(req, res)=>{
       const dataSave = await WashingSave.find({})
       res.status(200).send(dataSave)
    })
